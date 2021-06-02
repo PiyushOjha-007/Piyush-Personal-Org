@@ -1,0 +1,49 @@
+.THIS .buttonClass:hover{
+    box-shadow: 0 0 0 0 transparent;
+    background-color: darkgreen;
+    color: #ffffff;
+}
+.THIS .buttonClass {
+   border-radius: 10px 10px 10px 10px; 
+    width:370px;
+    font-size:18px;
+    height:35px;
+    background-color: green; 
+    color:#ffffff;
+    border: 1px solid green;
+    
+}
+.THIS .buttonClass1 {
+   border-radius: 10px 10px 10px 10px; 
+    width:370px;
+    font-size:18px;
+    height:35px;
+    background-color: grey; 
+    color:white;
+    border: 1px solid grey;
+    
+}
+.THIS .buttonClassCancel:hover{
+    box-shadow: 0 0 0 0 transparent;
+    background-color: #16afda;
+    color: #ffffff;
+}
+.THIS .buttonClassCancel {
+   border-radius: 10px 10px 10px 10px; 
+    width:160px;
+    height:35px;
+    background-color: black; 
+    color:white;
+    border: 1px solid ghostwhite;
+    
+}
+.THIS .slds-form-element__label
+{
+    font-size:12px;
+    color:black;
+}
+.THIS .slds-truncate
+{
+    
+    font-size:12px;
+}

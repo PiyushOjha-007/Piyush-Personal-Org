@@ -1,0 +1,5 @@
+<aura:component implements="force:appHostable" >
+    
+    <c:ParentComponent />
+    <aura:handler name="bubbleCaptureEvent" event="c:MyEvent" action="{!c.handleCaptureonGod}" />
+</aura:component>

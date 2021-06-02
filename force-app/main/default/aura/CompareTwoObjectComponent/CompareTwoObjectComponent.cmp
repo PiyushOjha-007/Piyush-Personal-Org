@@ -1,0 +1,166 @@
+<aura:component controller="DataComparingApexController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    <aura:attribute name="TotalMismatch" type="Integer" default="0"/>
+    <aura:attribute name="TotalMissingData" type="Integer" default="0"/>
+    <aura:attribute name="showData" type="Boolean" default="false" />
+    <aura:attribute name="showAllData" type="Boolean" default="false" />
+    <aura:attribute name="TotalNewData" type="Integer" default="0"/>
+    <aura:attribute name="selectedValue" type="String" default="None"/>
+    <aura:attribute name="Deletingdata" type="List" />
+    <aura:attribute name="DataList" type="List" />
+    <aura:attribute name="Inertingdata" type="List" />
+    <aura:attribute name="AllDataList" type="DataComparingApexController.ComparisonResultWrapper[]" />
+    
+    <p style="text-align:center;background:white;font-size:14px;padding-bottom:10px;">Click on the button to Compare Two Objects</p>
+    <div class="c-container" style="background:white;padding:10px;">
+        <div style="text-align:center;">
+            <lightning:button variant="brand" label="Compare Two Object Data" title="Compare Two Object Data" onclick="{! c.handleClick }" />
+        </div>
+        <div class="slds-grid slds-gutters" style="background:#f5f5f5;padding:20px;margin:5px;">
+            <div class="slds-col slds-size_2-of-3">
+                <b> Data-Value Mismatch Fields :- {!v.TotalMismatch} <br/> Deleted/Missing Data :- {!v.TotalMissingData} <br/> Data to be Inserted :- {!v.TotalNewData}</b>
+            </div>
+            <div class="slds-col slds-size_1-of-3">
+                <lightning:select aura:id="select" name="select" label="Select Data Action" onchange="{! c.onChange }">
+                    <option value="None">Select One..</option>
+                    <option value="InsertingData">Data To Be Inserted</option>
+                    <option value="DeletingData">Data To Delete</option>
+                    <option value="Updating">Data MisMatch/Update Data</option>
+                </lightning:select>
+            </div>
+        </div>
+        
+        <aura:if isTrue="{!v.showAllData}">
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">      
+                <thead>  
+                    <tr class="">
+                        <th scope="col">
+                            <div class="slds-truncate" title="Primary Value">PrimaryName</div>
+                        </th>
+                        
+                        <th scope="col">
+                            <div class="slds-truncate" title="Staging Value">StagingName</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Global ID">PrimaryFname</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Primary DataType">StagingFname</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Staging DataType">PrimaryLname</div>
+                        </th>
+                         <th scope="col">
+                            <div class="slds-truncate" title="Staging DataType">StagingLname</div>
+                        </th>
+                         <th scope="col">
+                            <div class="slds-truncate" title="Staging DataType">PrimaryCity</div>
+                        </th>
+                         <th scope="col">
+                            <div class="slds-truncate" title="Staging DataType">StagingCity</div>
+                        </th>
+                         <th scope="col">
+                            <div class="slds-truncate" title="Staging DataType">Primary GId</div>
+                        </th>
+                         <th scope="col">
+                            <div class="slds-truncate" title="Staging DataType">Staging GId</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>        
+                    
+                    <aura:iteration items="{!v.AllDataList}" var="data">
+                        <tr>
+                            <td >
+                                <div class="slds-truncate" title="{!data.PrimaryName}">{!data.PrimaryName}</div>
+                            </td>
+                            <td >
+                                <div class="slds-truncate" title="{!data.StagingName}">{!data.StagingName}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.PrimaryFname}">{!data.PrimaryFname}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.StagingFname}">{!data.StagingFname}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.PrimaryLname}">{!data.PrimaryLname}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.PrimaryLname}">{!data.PrimaryLname}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.PrimaryCity}">{!data.PrimaryCity}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.StagingCity}">{!data.StagingCity}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.PrimaryGlobalIdentifier}">{!data.PrimaryGlobalIdentifier}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title="{!data.StagingGlobalIdentifier}">{!data.StagingGlobalIdentifier}</div>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </aura:if>
+        <aura:if isTrue="{!v.showData}">
+            <div class="slds-m-around_xx-large">
+                <h1 class="slds-text-heading--medium"> {!v.selectedValue} Records</h1>
+                <br/>
+                <!--Contact List Table-->
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">      
+                    <thead>  
+                        <tr class="slds-text-title--caps">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Name">Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="FName">FName</div>
+                            </th>
+                            
+                            <th scope="col">
+                                <div class="slds-truncate" title="Lname">Lname</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Global ID">Global Id</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="City">City</div>
+                            </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>        
+                        
+                        <aura:iteration items="{!v.DataList}" var="data">
+                            <tr>
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!data.Name}">{!data.Name}</div>
+                                </th>
+                                <td>
+                                    <div class="slds-truncate" title="{!data.FName}">{!data.Fname__c}</div>
+                                </td>
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!data.LName}">{!data.Lname__c}</div>
+                                </th>
+                                <td>
+                                    <div class="slds-truncate" title="{!data.Globald}">{!data.Global_Identifier__c}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate" title="{!data.City}">{!data.City__c}</div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+        </aura:if>
+    
+    </div>
+    
+    
+</aura:component>

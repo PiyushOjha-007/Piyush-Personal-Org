@@ -1,0 +1,23 @@
+.THIS .slds-button{
+    background:white;
+        color:black;
+    border:2px solid grey;
+    border-radius:5px;
+}
+
+.THIS .buttonClass:hover{
+    box-shadow: 0 0 0 0 transparent;
+    background-color: darkgreen;
+    color: #ffffff;
+}
+.THIS .buttonClass {
+   border-radius: 10px 10px 10px 10px; 
+    width:180px;
+    font-size:14px;
+    height:35px;
+    background-color: green; 
+    color:#ffffff;
+    border: 1px solid green;
+    text-align:center;
+    
+}

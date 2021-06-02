@@ -1,0 +1,13 @@
+<aura:component >
+    <lightning:layout multipleRows="true">
+<lightning:layoutItem size="12"  mediumDeviceSize="6">
+Name
+</lightning:layoutItem>
+<lightning:layoutItem size="12"  mediumDeviceSize="6" >
+AccountNumber
+</lightning:layoutItem>
+<lightning:layoutItem size="12"  mediumDeviceSize="6">
+Industry
+</lightning:layoutItem>
+</lightning:layout>
+</aura:component>

@@ -1,0 +1,40 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="FileUploadApexController" access="global" >
+	
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:attribute name="accept" type="List" default="['.jpg', '.jpeg','.png','.PNG']"/>
+    <aura:attribute name="multiple" type="Boolean" default="true"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="fn" type="List" />
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <aura:attribute name="multiSelect" type="Boolean" default="false"/>
+    <aura:attribute name="caseObj" type="Case" />
+    <aura:attribute name="countFile" type="Integer" default="0" />
+    <aura:attribute name="documentIds" type="String" />
+    <aura:attribute name="fileNames" type="String[]" />
+    
+   <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'My Open Cases', 'value': 'OpenCases'},
+                                                        {'label': 'My Closed Cases', 'value': 'ClosedCases'}
+                                                        ]"/>
+    
+    <lightning:recordEditForm aura:id="editForm" objectApiName="Case"  onsuccess="{!c.handleSuccess}" onSubmit="{!c.submitCase}">
+      
+      <lightning:inputField fieldName="Subject"  />
+      <lightning:inputField fieldName="Status" />
+      <lightning:inputField fieldName="Reason" />
+        <lightning:inputField fieldName="Origin" />
+      <lightning:fileUpload label="Add attachment" multiple="false" 
+                           recordId="{!v.recordId}" 
+                          onuploadfinished="{!c.handleUploadFinished}" />
+        <aura:iteration items="{!v.fileNames}" var="file" >
+            <span style="color:red">*{!file}</span><br/>
+        </aura:iteration>
+        
+         <button class="slds-button slds-button_brand" type="Submit"> Submit </button>
+</lightning:recordEditForm>
+     
+    
+  
+
+
+</aura:component>

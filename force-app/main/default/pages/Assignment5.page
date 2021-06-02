@@ -1,0 +1,25 @@
+<apex:page standardController="Account" recordSetVar="accounts">
+    
+    
+<apex:pageBlock title="Account List Details">
+        <apex:pageBlockTable value="{!accounts}" var="acc" border="2">
+        	
+                
+                
+            <apex:column >
+                <apex:form >
+                <apex:commandLink value="{!acc.name}"  ></apex:commandLink>
+                  </apex:form>
+            </apex:column>
+                		<apex:column value="{!acc.AccountNumber}"/>
+            			<apex:column value="{!acc.Phone}"/>
+                		<apex:column value="{!acc.Email__c}"/>
+            			<apex:column value="{!acc.HeadOfficeCountry__c}"/>	
+                        
+                        
+                    
+                
+            
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

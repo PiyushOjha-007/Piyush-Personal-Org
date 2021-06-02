@@ -1,0 +1,16 @@
+.THIS .slds-form {
+    color:black;
+}
+.THIS .slds-checkbox {
+    display: inline !important;
+}
+    .THIS .selected{
+    color:orange;
+}
+.THIS .slds-checkbox_faux
+{
+    border-radius: 2px;
+    color: white;
+    background: white;
+    border-color: grey;
+}

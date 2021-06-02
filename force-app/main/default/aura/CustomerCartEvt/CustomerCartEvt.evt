@@ -1,0 +1,10 @@
+<aura:event type="APPLICATION" description="Event template" >
+    <aura:attribute name="addToCartClicked" type="boolean" default="false" />
+<aura:attribute name="pizzaCount" type="Integer" default="0" />
+<aura:attribute name="pizzaName" type="Pizza__c[]"  />
+<aura:attribute name="pizzaPrice" type="Integer" default="0" />
+    
+    <aura:attribute name="drinkCount" type="Integer" default="0" />
+<aura:attribute name="drinkName" type="Drink__c[]"  />
+<aura:attribute name="drinkPrice" type="Integer" default="0" />
+</aura:event>

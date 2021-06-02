@@ -1,0 +1,51 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller = "ContactCaseOppController">
+<aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="pageNumber" type="Integer" default="0"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/> 
+    <aura:attribute name="SelectedObject" type="String" default="Contacts"/> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <h1></h1>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <p class="slds-page-header__title">{!v.SelectedObject}</p>
+                    </h2>
+                </div>
+                <div class="slds-no-flex">
+                    <lightning:select aura:id="select" name="select" label="Select the Records" onchange="{! c.onSelect }">
+                        <option value="Contact">Contacts</option>
+                        <option value="Account">Accounts</option>
+                        <option value="Opportunity">Opportunities</option>
+                    </lightning:select><br/>
+                     
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <!-- All the Records with Proper Pagination -->
+            <lightning:datatable aura:id = "accDT"
+                             columns = "{!v.columns}"
+                             maxRowSelection="{!v.maxRowSelection}"
+                             data = "{!v.data}"
+                             keyField = "Id"
+                             onrowaction="{!c.handleRowAction}"/>
+        </div>
+        <footer class="slds-card__footer slds-grid slds-gutters">
+            <div class="slds-col slds-float_left">
+                <p class="slds-page-header__title"> Page {!v.pageNumber} | Showing records from {!(v.pageSize * v.pageNumber)} to {!(v.pageSize * v.pageNumber + v.pageSize)} </p>
+            </div>
+            <div class="slds-col slds-float_right">
+            <lightning:button iconName="utility:chevronleft" iconPosition="left" disabled = "{!v.pageNumber  == 1}" variant="brand" label="Previous" title="Previous" onclick="{! c.handlePrevious }"/>
+            <lightning:button iconName="utility:chevronright" iconPosition="right" disabled = "{!v.isLastPage}" variant="brand" label="Next" title="Next" onclick="{! c.handleNext }"/>
+            </div>
+        </footer>
+    </article>	
+    
+</aura:component>

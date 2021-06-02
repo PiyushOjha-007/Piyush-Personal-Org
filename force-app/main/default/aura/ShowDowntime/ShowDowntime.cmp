@@ -1,0 +1,22 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="mainDetail" type="Maintenance__c" access="global"/>
+    
+    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+        <span class="slds-assistive-text">Warning</span>
+        <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+            
+        </span>
+        <h2>{!v.mainDetail.Downtime__c} <br/>
+            Starting from : {!v.mainDetail.Start_Time__c} Till {!v.mainDetail.End_Time__c}
+            <a href="javascript:void(0);">More Information</a>
+        </h2>
+        <div class="slds-notify__close">
+            <lightning:buttonIcon iconName="utility:close" size="medium" variant="bare" alternativeText="Settings" iconClass="dark"/>
+                
+                <span class="slds-assistive-text">Close</span>
+            
+        </div>
+    </div>
+    
+</aura:component>

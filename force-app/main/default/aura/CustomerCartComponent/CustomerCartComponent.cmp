@@ -1,0 +1,86 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="MyRetailer_Controller" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="pizzaCount" type="Integer" default="0" />
+    <aura:attribute name="pizzaName" type="String"  />
+    <aura:attribute name="pizzaDetail" type="List"  />
+    <aura:attribute name="pizzaPrice" type="Integer" default="0" />
+    <aura:handler event="c:CustomerCartEvt" action="{!c.CartLoad}"/> 
+    
+    <aura:attribute name="orderContact" type="Id" />
+    <aura:attribute name="disableCheckout" type="Boolean" default="false"/>
+    <aura:attribute name="addToCartClicked" type="Boolean" default="false"/>
+    <aura:attribute name="ItemCount" type="Integer" default="0"/>
+    <aura:attribute name="TotalAmount" type="Integer" default="0"/>
+    <aura:attribute name="TotalGST" type="Integer" default="0"/>
+    <aura:attribute name="TotalDiscount" type="Integer" default="0"/>
+    <aura:attribute name="GrandTotal" type="Integer" default="0"/>
+    
+    <lightning:card variant="Narrow" title="My Basket" iconName="utility:cart" >
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <lightning:layoutItem padding="around-small" size="12">
+                <label style="font-size:13px;">Items Selected : {!v.pizzaCount} </label>
+                <hr></hr>
+                <aura:iteration items="{!v.pizzaDetail}" var="item" indexVar="i">
+                    <div class="slds-grid slds-gutters" style="color:grey;">    
+                        <div class="slds-col slds-size_1-of-3">
+                            <label style="font-size:13px;text-align:right;" align="right" >{!item.Name} </label>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <label style="font-size:11px;text-align:right;" align="right" ><b>{!item.Price__c} $</b></label>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning:buttonIcon iconName="utility:delete" name="{!i}" size="medium" variant="bare" alternativeText="Settings" onclick="{! c.cancelItem }" iconClass="dark"/>
+                        </div>
+                    </div><br/>
+                </aura:iteration>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem padding="around-small" size="12">
+                
+                <div class="slds-form"> 
+                    
+                    <div class="slds-form-element slds-form-element_horizontal">
+                        <label class="slds-form-element__label" for="horizontal-input-id-04">Sub Total: {!v.TotalAmount} $</label>                       
+                    </div>
+                    <br/>
+                    <aura:if isTrue="{!v.addToCartClicked}">
+                        <lightning:accordion aura:id="accordion" allowMultipleSectionsOpen="true"
+                                             onsectiontoggle="{! c.handleSectionToggle }">
+                            <lightning:accordionSection name="Total Tax/Discounts" label="Total Tax/Discounts">
+                                <aura:set attribute="body">
+                                    <div class="slds-form-element slds-form-element_horizontal">
+                                        <label class="slds-form-element__label" >CGST :</label>
+                                        
+                                        <lightning:formattedNumber value="{!v.TotalAmount * 0.025}" style="currency" currencyCode="USD" maximumFractionDigits="3"/><br/><br/>
+                                        <label class="slds-form-element__label" >SGST :</label>
+                                        
+                                            <lightning:formattedNumber value="{!v.TotalAmount * 0.025}" style="currency" currencyCode="USD" maximumFractionDigits="3"/>
+                                    </div>
+                                    <div class="slds-form-element slds-form-element_horizontal">
+                                        <label class="slds-form-element__label" for="horizontal-input-id-06">Total Discount :</label>
+                                        <div class="slds-form-element__control">
+                                            <label id="horizontal-input-id-06"> {!v.TotalDiscount}</label>
+                                        </div>
+                                    </div>
+                                    
+                                </aura:set>
+                            </lightning:accordionSection>
+                        </lightning:accordion>
+                    </aura:if>
+                    
+                   
+                </div>   
+            </lightning:layoutItem>           
+            <lightning:layoutItem flexibility="auto" alignmentBump="center" padding="around-small" size="12">
+                <lightning:button label="{!(join('  ','Checkout $',(v.TotalAmount*0.05) + v.TotalAmount + v.TotalDiscount))}"
+                                  class="{!v.disableCheckout?'buttonClass1':'buttonClass'}"
+                                  onclick="{!c.checkOut}" />
+                
+            </lightning:layoutItem>
+        </lightning:layout>
+    </lightning:card>
+    
+    
+    
+</aura:component>

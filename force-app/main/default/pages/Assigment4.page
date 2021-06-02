@@ -1,0 +1,38 @@
+<apex:page standardController="Account">
+
+    <apex:form >
+        <apex:pageBlock title="Account Page Details/Email Validation">
+        <apex:pageBlockButtons >
+        	<apex:commandButton value="Save" action="{!quickSave}"  rerender="out, in"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+            
+        <apex:inputField value="{!Account.name}" required="true"/>
+        <apex:inputField value="{!Account.AccountNumber}"/>
+            
+        <apex:inputField value="{!Account.Email__c}" required="true"/>
+        <apex:inputField value="{!Account.Website}"/>
+        <apex:inputField value="{!Account.Phone}"/>
+            
+        <apex:inputField value="{!Account.HeadOfficeCountry__c}"/>
+        <apex:inputField value="{!Account.AnnualRevenue}"/>
+        <apex:inputField value="{!Account.NumberOfEmployees}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    
+    </apex:form>
+	<apex:pageBlock id="out" title="Read View">
+        <apex:actionStatus startText="updating..." id="status"/>
+    	<apex:pageBlockSection >
+        	<apex:outputField value="{!Account.name}"/>
+                <apex:outputField value="{!Account.AccountNumber}"/>
+                    <apex:outputField value="{!Account.Email__c}"/>
+                        <apex:outputField value="{!Account.Website}"/>
+                            <apex:outputField value="{!Account.Phone}"/>
+                                <apex:outputField value="{!Account.HeadOfficeCountry__c}"/>
+                                    <apex:outputField value="{!Account.AnnualRevenue}"/>
+                                        <apex:outputField value="{!Account.NumberOfEmployees}"/>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+</apex:page>

@@ -1,0 +1,7 @@
+<aura:component >
+    
+    <aura:registerEvent name="bubbleEvent" type="c:MyEvent" />
+   <!-- <aura:handler name="bubbleCaptureEvent" event="c:MyEvent" action="{!c.handleCapture}" phase="capture"/>  -->
+    ChildComponent
+    <lightning:button label="Start Event propagation" onclick="{!c.executeEvent}"/>
+</aura:component>

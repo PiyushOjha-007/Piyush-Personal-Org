@@ -1,0 +1,69 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+        <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="allData" type="List" access="global"/>
+    <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="pageList" type="List"/>
+    <aura:attribute name="checkBoxvalue" type="String" default = ''/>
+    
+    <lightning:layout multipleRows="true" horizontalAlign="center">
+        <lightning:layoutItem padding="around-small" size="12">
+            <aura:iteration items="{!v.allData}" var="accVar" indexVar="index">
+                <tr>
+         		<td>{!accVar.Name}</td>
+         		<td>{!accVar.AccountNumber}</td>
+            	<td>{!accVar.Email__c}</td>
+                <td>{!accVar.HeadOfficeCountry__c}</td>
+                 
+         </tr>
+            </aura:iteration>
+        </lightning:layoutItem>
+        
+        <lightning:layoutItem padding="around-small" flexibility="auto">
+            <lightning:button label="First" variant="brand" iconName="utility:left" iconPosition="left"
+                              onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/> 
+            <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                              onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/> 
+            
+            <!-- <lightning:button variant="base" label="Previous" iconPosition="left"
+                                  onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/> -->
+            
+            <span class="slds-p-horizontal_x-small">
+                <a onclick="{!c.processMe}" name="1" 
+                   class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+            </span>
+            <span class="slds-p-horizontal_xxx-small">
+                <a>...</a>
+            </span>
+            
+            <aura:iteration items="{!v.pageList}" var="item">
+                <span class="slds-p-horizontal_x-small">
+                    <a onclick="{!c.processMe}" name="{!item}"
+                       class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}
+                    </a>
+                </span>
+            </aura:iteration>
+            
+            <span class="slds-p-horizontal_xxx-small">
+                
+            </span>
+            <span class="slds-p-horizontal_x-small">
+                <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                   class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}"> {!v.totalPages} </a>
+            </span>
+            <!--  <lightning:button variant="base" label="Next" iconPosition="right" 
+                                  disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/> -->
+            <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                              disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+            <lightning:button label="Last" variant="brand" iconName="utility:right" iconPosition="right" 
+                              disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/> 
+        </lightning:layoutItem>
+        
+    </lightning:layout>
+    
+</aura:component>

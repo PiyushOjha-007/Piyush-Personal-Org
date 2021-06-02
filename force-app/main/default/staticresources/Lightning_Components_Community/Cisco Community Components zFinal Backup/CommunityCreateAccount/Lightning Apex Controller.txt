@@ -1,0 +1,144 @@
+public class Create_Account_ApexClass {
+    
+    @AuraEnabled 
+    public String firstname='';
+    
+    // @AuraEnabled
+    // public static boolean userCreated {get; set;}
+    
+    @AuraEnabled
+    public static string alias {get; set;}
+    
+    
+    
+    @AuraEnabled
+    public static boolean getContact(Contact con, string language, string localeLtimezone) {
+        System.debug('Contact In Method'+con);
+        Boolean userCreated=false;
+        system.debug('testing user creation'+con+'<<<<<<<>>>>>'+language+'<<>>>>'+localeLtimezone);
+        //  UserLocaleInfo userLocaleInfo = new UserLocaleInfo(language);
+        //  UserLocaleInfo userLocaleInfo1 = new UserLocaleInfo(localeLtimezone);
+        if(language != 'en' && language != 'ja' && language != 'zh'){
+            language = 'en_US';
+        }
+        List<Contact> contactList = [select id, firstname, lastname, email,accountId from Contact where email =: con.Email];
+        System.debug('Contact List In Method'+contactList);
+        try{
+            if (contactList != null && contactList.size() > 0) {
+                System.debug('contactList'+contactList);
+                userCreated = false;
+                return userCreated;
+            }
+            
+            else{   
+                System.debug('else entered');
+                insert con;
+                //user creation //
+                
+                integer myInteger = Math.round((Math.random() * (1000) + 9999));
+                string num =String.valueOf(myInteger);
+                boolean flag = false;
+                alias = con.FirstName.substring(0, 1) + con.LastName.substring(0,1)+num;
+                system.debug('alias'+alias);
+                // Code for correct time zone by PO
+                for(Schema.PicklistEntry s : User.fields.TimeZoneSidKey.getDescribe().getpicklistvalues() ){
+                    
+                    if(s.getValue() == localeLtimezone )
+                    {
+                        flag =  true;
+                        break;
+                    }
+                }
+                if(flag == false)
+                {
+                    localeLtimezone = 'America/Los_Angeles';
+                }
+                if(language == 'en'){
+                    language = 'en_US';
+                }
+                else if (language == 'ja'){
+                    language = 'ja';
+                }
+                else if (language == 'zh'){
+                    language = 'zh_CN';  
+                }
+                User user1 = new User(   ProfileID = Create_Account_ApexClass.getCustomerPortalProfileId(),
+                                      EmailEncodingKey = Constants.USER_EMAIL_ENCODING,
+                                      LanguageLocaleKey = language,
+                                      TimeZoneSidKey =   localeLtimezone, 
+                                      LocaleSidKey = language,
+                                      FirstName = con.FirstName,
+                                      LastName = con.LastName,
+                                      Username = con.Email,   
+                                      CommunityNickname = alias,
+                                      Alias = alias,
+                                      Email = con.Email,
+                                      Country_Phone_Code__c = con.Country_Area_Code__c,
+                                      IsActive = true,
+                                      ContactId = con.Id,
+                                      Default_Country__c = con.Country__c,
+                                      IsPortalSelfRegistered = true   
+                                     );
+                System.debug('user data'+user1);
+                String userId;
+              //  User userRun = [Select id from User where Profile.Name = 'System Administrator' limit 1];
+              //  system.debug('User Run'+userRun);
+                
+                    userId = Site.createExternalUser(user1, con.AccountId,'');
+                    Database.DMLOptions dmo = new Database.DMLOptions();
+                   dmo.EmailHeader.triggerUserEmail = true;
+                    user1.setOptions(dmo);
+                    userCreated = true;
+                    system.debug('code here');
+                
+                
+                
+                
+               /* EmailTemplate et=[Select id from EmailTemplate where name = 'Customer Portal:  Customer Portal New User Login Information' limit 1];
+                List<Messaging.SingleEmailMessage> allmsg = new List<Messaging.SingleEmailMessage>();
+                Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
+                message.toAddresses = new String[] { con.Email, con.Email };
+                    message.setTemplateID(et.id); 
+                message.optOutPolicy = 'FILTER';
+                allmsg.add(message);
+                Messaging.sendEmail(allmsg,false); */
+                
+                return userCreated;
+            }
+        }
+        Catch(Exception e){
+            System.debug('Exception'+e+'Line Number'+e.getLineNumber());
+        }
+        return userCreated;
+    }
+    
+    @AuraEnabled
+    public static Id getCustomerPortalProfileId() {
+        Id cspProfileId =null;
+        try {
+            PortalSettings__c portalSettings = PortalSettings__c.getInstance(); 
+            Profile profile = [Select id from Profile where profile.Name =: portalSettings.ProfileName__c];
+            cspProfileId = profile.Id;
+        } 
+        catch(QueryException queryEx) {
+            System.debug('Could not find Profile that needs to be used for creating portal users. Check PortalSettings are setup correctly in Setup|Develop|Custom Settings');
+        }
+        return cspProfileId;    
+    }
+    
+    @AuraEnabled
+    public static List<CountryAndAreaCode__c> getAllCountryCode() {
+        List<CountryAndAreaCode__c> lstOfCountryCodeNew = CountryAndAreaCode__c.getAll().values();
+         lstOfCountryCodeNew.sort();
+        List<String> lstOfCountryCode = new List<String>();
+        for(CountryAndAreaCode__c objCode : lstOfCountryCodeNew)
+        {
+            lstOfCountryCode.add(objCode.Country_Area_Code__c);
+        }
+        system.debug('lstOfCountryCode'+lstOfCountryCode.size());
+        
+        
+        return lstOfCountryCodeNew;
+    }
+    
+}

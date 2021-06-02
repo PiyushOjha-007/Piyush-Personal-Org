@@ -1,0 +1,106 @@
+<aura:component controller="CertificationController" implements="force:appHostable" >
+	
+    <aura:attribute type="List" name="CaseList"/>
+    <aura:attribute type="boolean" name="openLookupComp" default="false"/>
+    <aura:attribute name="checkBoxCount" type="Integer" default="0"/>
+    <aura:attribute type="List" name="casesId"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    
+    <span class="slds-align_absolute-center slds-text-heading_medium" style="color:white">Choose a career path below that meets your career development goals.
+        </span>
+        <br/>
+    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" style="
+    border-color: darkgrey;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 50px;
+    margin-right: 0px;
+    width: 1118px;
+    height: 391px;
+">
+        <thead>
+            <lightning:button variant="brand" label="Assign User" title="Assign User" onclick="{! c.assignUser }" />
+            <br/>
+			<span class="slds-badge">Selected Contact:{!v.checkBoxCount}</span>            
+            
+            <tr class="slds-line-height_reset">
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Action">Action</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Case Number">Case Number</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Priority">Priority</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Status">Status</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Case Type">Case Type</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Case Owner">Case Owner</div>
+                </th>
+                
+                
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.CaseList}" var="item">
+                
+                <tr class="slds-hint-parent">
+                    
+                    <td scope="row">
+                        <div class="slds-truncate" title="Checkbox">
+                             <ui:inputCheckbox aura:id="Box" text="{!item.Id}" change="{!c.OncheckboxSelect}"/>
+                        </div>
+                    </td>
+                    
+                    <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.CaseNumber}</a>
+                        </div>
+                    </td>
+                
+                
+                    <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Priority}</a>
+                        </div>
+                    </td>
+                <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Priority}</a>
+                        </div>
+                    </td>
+                 <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Type}</a>
+                        </div>
+                    </td>
+                <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.OwnerId}</a>
+                        </div>
+                    </td>
+                    </tr>
+            </aura:iteration>
+            
+            
+            
+        </tbody>
+    </table>
+    
+    
+    
+    <aura:if isTrue="{!v.openLookupComp}">
+        <c:CiscoCaseAssignUser openLookupComp="{!v.openLookupComp}" casesId="{!v.casesId}" CaseList="{!v.CaseList}" checkBoxCount = "{!v.checkBoxCount}" />
+    
+    </aura:if>
+    
+    
+</aura:component>

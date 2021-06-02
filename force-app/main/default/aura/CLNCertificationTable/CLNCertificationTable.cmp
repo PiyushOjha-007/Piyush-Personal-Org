@@ -1,0 +1,89 @@
+<aura:component controller="CertificationController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    
+    
+    <aura:attribute type="List" name="CertiList"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!--  <lightning:datatable data="{! v.CertiList }"
+                         columns="{! v.mycolumns }"
+                         keyField="id"
+                         hideCheckboxColumn="true"/> -->
+    
+    <span class="slds-align_absolute-center slds-text-heading_medium">Choose a career path below that meets your career development goals.
+</span>
+    <br/>
+    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" style="
+    border-color: darkgrey;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 50px;
+    margin-right: 0px;
+    width: 1118px;
+    height: 391px;
+">
+        <thead>
+            <tr class="slds-line-height_reset">
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Certification Track">Certification Track</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Entry">Entry</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Associate">Associate</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Professional">Professional</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Expert">Expert</div>
+                </th>
+                
+                
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.CertiList}" var="item">
+                
+                <tr class="slds-hint-parent">
+                    <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Certification_Track__c}</a>
+                        </div>
+                    </td>
+                
+                
+                    <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Entry__c}</a>
+                        </div>
+                    </td>
+                <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Associate__c}</a>
+                        </div>
+                    </td>
+                 <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Professional__c}</a>
+                        </div>
+                    </td>
+                <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Expert__c}</a>
+                        </div>
+                    </td>
+                    </tr>
+            </aura:iteration>
+            
+            
+            
+        </tbody>
+    </table>
+    
+    
+    
+</aura:component>

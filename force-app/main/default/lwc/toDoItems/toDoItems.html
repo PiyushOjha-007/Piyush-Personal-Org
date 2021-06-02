@@ -1,0 +1,7 @@
+<template>
+<div class={ChildContainer} >
+    <span class="slds-text-heading_label">{toDoTaskName} </span>
+    <lightning-button-icon class="slds-p-horizontal_medium" icon-name="utility:check" title="update todo" onclick={updateToDoHandler}></lightning-button-icon>
+    <lightning-button-icon icon-name="utility:delete" title="delete ToDo" onclick={deleteToDoHandler}></lightning-button-icon>
+</div>
+</template>

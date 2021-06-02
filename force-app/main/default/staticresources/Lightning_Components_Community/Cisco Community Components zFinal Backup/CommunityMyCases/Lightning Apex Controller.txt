@@ -1,0 +1,88 @@
+/***********************************************************************************
+* File Name: MyCase_Controller
+* Description : The Apex Server Side Controller for CommunityMyCasesComponent
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-06-2019
+* ***********************************************************************************/
+
+public with sharing class MyCase_Controller {
+
+/***********************************************************************************
+* Methods: getCase
+* Arguments : String statusValue
+* Description : The method is returning all the cases to its respective Controller based on the Case Status
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-06-2019
+* ***********************************************************************************/
+    @AuraEnabled
+    public static List<Case> getCase(String statusValue) {
+        List<Case> lstOfAllCases = new List<Case>();
+        List<Case> lstOfOpenCases = new List<Case>();
+        List<Case> lstOfClosedCases = new List<Case>();
+        Set<String> setOfCloseCases = new Set<String>();
+        List<String> strlist = Label.ClosedCaseStatus.split(',');
+        for(String str : strlist)
+        {
+            setOfCloseCases.add(str);
+        }
+        List<User> u = [select id , ContactId from User where id = :Userinfo.getUserId() limit 1];
+            string contactid = u[0].contactId;
+        system.debug('setOfString : '+setOfCloseCases);
+        system.debug('STATUS VALUE : '+statusValue);
+        // Added toLabel function in  query  for status Field to translate status value to locale on 6th dec.
+        if(String.isNotEmpty(statusValue) && statusValue.containsIgnoreCase(Constants.Open_Case))
+        {
+          
+            System.debug('INSIDE OPEN CASE');
+            return [SELECT id,Subject, toLabel(Status),Case_Create_Product__c,Case_Close_Product__c,Queue__c, CaseNumber, CreatedDate FROM Case where status NOT IN : setOfCloseCases AND Examtipline_Check__c = false AND contactid =:contactid order by LastModifiedDate desc];
+        }
+        else if(String.isNotEmpty(statusValue) && statusValue.containsIgnoreCase(Constants.Close_Case))
+        {
+            System.debug('INSIDE CLOSED CASE');
+            return [SELECT id,Subject, toLabel(Status),Case_Create_Product__c,Case_Close_Product__c,Queue__c, CaseNumber, CreatedDate FROM Case where Status IN : setOfCloseCases AND Examtipline_Check__c = false AND contactid =:contactid order by LastModifiedDate desc];
+        }
+        else
+        {
+            System.debug('INSIDE ALL CASE');
+            return [SELECT id,Subject, toLabel(Status),Case_Create_Product__c,Case_Close_Product__c,Queue__c, CaseNumber, CreatedDate FROM Case where Contactid = :contactid AND Examtipline_Check__c = false order by LastModifiedDate desc];
+        }
+        
+        
+    }
+    
+    @AuraEnabled
+    public static List<Case> searchByText(String searchText){
+        //  if(searchtext.length()!=0 || searchtext.length()!=NULL){
+        System.debug('searchText'+searchText);
+        List<case> lstOfSearchCase = new List<case>();
+        String tempInput = '%'+searchtext+'%';
+        System.debug('tempinput'+tempInput);
+         List<User> u = [select id , ContactId from User where id = :Userinfo.getUserId() limit 1];
+         string contactid = u[0].contactId;
+        lstOfSearchCase = [Select id,subject,status,CaseNumber,Case_Create_Product__c,	Case_Close_Product__c,CreatedDate,Queue__c from Case where (CaseNumber Like:tempInput OR subject Like :tempInput ) AND Contactid = :contactid AND Examtipline_Check__c = false];
+        
+        return lstOfSearchCase;
+        // }
+        /* else{
+return [SELECT id,Subject, Status, CaseNumber, CreatedDate FROM Case ORDER BY createdDate ASC LIMIT 10];  
+}*/
+        
+    }
+    @AuraEnabled
+    public static Boolean checkUserContact(){
+        boolean contactExist = false;
+        User objUser = [Select id,contactid from User where Id =: Userinfo.getUserId()];
+        system.debug('USER objUser:'+objUser);
+        if(objUser != null && objUser.ContactId != null)
+        {
+            contactExist = true;
+            return contactExist;
+        }
+        else
+        {
+            contactExist =false;
+            return contactExist;
+        }
+        
+    }
+}

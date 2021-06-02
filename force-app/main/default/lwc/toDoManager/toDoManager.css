@@ -1,0 +1,22 @@
+.time{
+     font-size: 4rem;
+     font-family: Cambria;
+     font-weight: 500;
+}
+.greeting
+{
+    font-size: 2rem;
+    font-weight: 200;
+    font-family: Cambria;
+}
+.container{
+    background-color: white;
+    padding: 3rem;
+    max-height: 30rem;
+    display: block;
+    overflow-y: scroll;
+}
+.Message
+{
+    font-family: sans-serif;
+}

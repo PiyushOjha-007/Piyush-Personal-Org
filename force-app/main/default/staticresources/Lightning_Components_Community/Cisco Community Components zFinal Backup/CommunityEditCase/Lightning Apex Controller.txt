@@ -1,0 +1,346 @@
+/***********************************************************************************
+* File Name: LTG_ContactSupportComponentClass
+* Description : The Apex Server Side Controller for LTG_ContactSupportComponent
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-12-2019
+* ***********************************************************************************/
+
+public class LTG_ContactSupportComponentClass {
+    
+    // New Code for Case Number Generation Starts
+    @AuraEnabled
+    public static String getCaseNumber(Id caseId) {
+        
+        String caseNumber = [Select casenumber from Case where Id =:caseId].casenumber;
+        return caseNumber;
+        
+    }
+    // New Code for Case Number Generation Ends
+    
+    /***************************************************************************************
+* Methods: saveFileWithCase
+* Arguments : None
+* Description : The method returns true If the file is successfully linked to the Case
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-18-2019
+* **************************************************************************************/
+    @AuraEnabled
+    public static boolean saveFileWithCase(List<Id> docId,Id caseId)
+    {
+        Boolean fileSaved = false;
+        List<Id> lstOfContentDocId = new List<Id>();
+        system.debug('Doc ID'+docId+'Case ID'+caseId);
+        for(ContentVersion objCV : [SELECT title,OwnerId,Owner.name,ContentDocumentId FROM ContentVersion WHERE ContentDocumentId IN : docId ])
+        {
+            lstOfContentDocId.add(objCV.ContentDocumentId);
+        }
+        // Id conDocument = [SELECT title,OwnerId,Owner.name,ContentDocumentId FROM ContentVersion WHERE ContentDocumentId =:docId ].ContentDocumentId;
+        system.debug('lstOfContentDocId'+lstOfContentDocId+'Size : '+lstOfContentDocId.size());
+        List<ContentDocumentLink> fileLinks = new List<ContentDocumentLink>();
+        for(integer i = 0;i<lstOfContentDocId.size();i++)
+        {
+            ContentDocumentLink cDocLink = new ContentDocumentLink();
+            cDocLink.ContentDocumentId = lstOfContentDocId[i];//Add ContentDocumentId
+            cDocLink.LinkedEntityId = caseId;
+            cDocLink.ShareType = 'I';//V - Viewer permission. C - Collaborator permission. I - Inferred permission.
+            cDocLink.Visibility = 'AllUsers';//, InternalUsers, SharedUsers
+            fileLinks.add(cDocLink);
+        }
+        
+        /*  system.debug('conDocument'+conDocument);
+ContentDocumentLink cDocLink = new ContentDocumentLink();
+cDocLink.ContentDocumentId = conDocument;//Add ContentDocumentId
+cDocLink.LinkedEntityId = caseId;
+cDocLink.ShareType = 'I';//V - Viewer permission. C - Collaborator permission. I - Inferred permission.
+cDocLink.Visibility = 'AllUsers';//, InternalUsers, SharedUsers
+fileLinks.add(cDocLink);
+system.debug('fileLinks List'+fileLinks); */
+        if(fileLinks != null && fileLinks.size() > 0)
+        {
+            Database.SaveResult[] srList = Database.insert(fileLinks,false);
+            for (Database.SaveResult sr : srList) 
+            {
+                if (sr.isSuccess()) {
+                    // deleteFilefromUser(docId);
+                    System.debug('Successfully inserted FIle with case. File ID: ' + sr.getId());
+                    fileSaved = true;
+                    return fileSaved;
+                }
+                else {
+                    // Operation failed, so get all errors 
+                    fileSaved = false;
+                                  
+                    for(Database.Error err : sr.getErrors()) {
+                        System.debug('The following error has occurred.');                    
+                        System.debug(err.getStatusCode() + ': ' + err.getMessage());
+                        System.debug('Account fields that affected this error: ' + err.getFields());
+                        return fileSaved; 
+                    }
+                }
+            }
+        }
+        
+        
+        
+        return fileSaved;
+    }
+    
+    /***************************************************************************************
+* Methods: getCase
+* Arguments : None
+* Description : The method returns Id of the case associated to the Case Number
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-22-2019
+* **************************************************************************************/
+    @AuraEnabled
+    public static Id getCase(String casenumber) {
+        system.debug('Case Num');
+        id caseId = [Select id,Subject,Phone__c,Business_Phone__c,Mobile_Phone__c,Description,Case_Create_Product__c,Case_Create_Sub_Product__c,Email__c from Case where casenumber =:casenumber].id;
+        return caseId;
+        
+    }
+    
+    
+    /***************************************************************************************
+* Methods: setCaseStatusClose
+* Arguments : Id caseId
+* Description : The method sets the case status to the Resolved if the Check box is checked in the Cmp side
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-22-2019
+* **************************************************************************************/    
+    @AuraEnabled
+    public static boolean setCaseStatusClose(Id CaseId,Boolean caseClosure,String caseComments,String business,String mobile,String[] files)
+    {
+        boolean statusClose = false;
+        List<case> lstOfCloseCase = new List<case>();
+        
+        if(caseClosure == true)
+        {
+            for(Case objCase :   [Select id,Status from case where Id =: CaseId])
+            {
+                Case obj = new Case(id=objCase.id);
+                obj.Status = 'Solved';
+                lstOfCloseCase.add(obj);
+            }
+            system.debug('lstOfCloseCase CASE CLOSURE TRUE'+lstOfCloseCase);
+            if(lstOfCloseCase != null && lstOfCloseCase.size()>0)
+            {
+                Database.update(lstOfCloseCase);
+                statusClose  = true;
+                return statusClose; 
+            }
+        }
+        
+         if(caseClosure == false && ( caseComments != null || business != null || mobile != null || files != null))
+        {
+            for(Case objCase :   [Select id,Status from case where Id =: CaseId])
+            {
+                Case obj = new Case(id=objCase.id);
+                obj.Status = 'Updated';
+                lstOfCloseCase.add(obj);
+            }
+            system.debug('lstOfCloseCase Case Closure Unresolved'+lstOfCloseCase);
+            if(lstOfCloseCase != null && lstOfCloseCase.size()>0)
+            {
+                Database.update(lstOfCloseCase);
+                statusClose  = true;
+                return statusClose; 
+            }
+        }
+        
+        
+        
+        return statusClose;
+    }
+    /***************************************************************************************
+* Methods: saveTheCaseComment
+* Arguments : String CaseComments,Id caseId
+* Description : The method saves the comments put on case in the Notes and Communication related Vf page.
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-21-2019
+* **************************************************************************************/    
+    @AuraEnabled
+    public static boolean saveTheCaseComment(String caseComments,ID caseID)
+    {
+        boolean statusNow = false;
+        CaseComment cComment = new CaseComment();
+        cComment.ParentId = caseID;
+        cComment.IsPublished = true; 
+        cComment.CommentBody = caseComments;
+        
+        //Create Notes 
+        Notes__c note = new Notes__c();
+        note.Case__c = caseID;
+        note.Message__c = caseComments; 
+        note.Type__c = 'Client';
+        
+        insert note; 
+        return statusNow;
+    }
+    
+    /***************************************************************************************
+* Methods: runAssignmentRuleForCase
+* Arguments : Id caseId
+* Description : The method runs the assignment rule and works accordingly.
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-26-2019
+* **************************************************************************************/   
+    @AuraEnabled
+    public static boolean runAssignmentRuleForCase(Id caseID)
+    {
+        boolean ruleSuccessfullyRun = true;
+        Case objCase = [Select id from Case where Id=:caseID ];
+        database.DMLOptions dmo = new database.DMLOptions();
+        dmo.AssignmentRuleHeader.UseDefaultRule= true;      
+        objCase.setOptions(dmo);
+        system.debug('dmo :'+dmo);
+        update objCase;
+        return ruleSuccessfullyRun;
+    }
+    
+    /***************************************************************************************
+* Methods: getAllCaseComments
+* Arguments : Id caseId
+* Description : The method returns all the case comments.
+* @Author : Piyush Ojha Cisco 
+* Created Date : 12-10-2019
+* **************************************************************************************/       
+    @AuraEnabled
+    public static List<Notes__c> getAllCaseComments(ID caseParentId)
+    {
+        try
+        {
+            system.debug('caseParentId'+caseParentId);
+            List<Notes__c> lstOfCaseComments =  new List<Notes__c>();
+            lstOfCaseComments = [Select Id,Subject__c,Message__c,createdDate,CreatedBy.Name,Type__c,case__c,Datetime_Created__c,From__c from Notes__c where case__c =:caseParentId AND
+                                           Type__c IN ('Client','Response')];
+            system.debug('lstOfCaseComments'+lstOfCaseComments+'lstOfCaseComments Size'+lstOfCaseComments.size());
+            if(lstOfCaseComments != null)
+            {
+                return lstOfCaseComments;
+            }
+            
+        }
+        catch(Exception e)
+        {
+            system.debug('Exception'+e+'Line number'+e.getLineNumber());
+        }
+        return null;
+        
+    }
+    
+    @AuraEnabled
+    public static string getCheckBoxValue(id caseid){
+        string cs = [select id , Contact_Preference__c From Case where id = :caseid limit 1].Contact_Preference__c;
+        return cs;
+    }
+   
+    // Changes by anuroop to retrieve  attachments and Files related to the parentId.
+    @AuraEnabled 
+    public static List<Attachment> getAttachments(id caseid){
+        List<Attachment> Attchlst = [Select id ,Body,Name, Description From Attachment where ParentId = :caseid];
+         return Attchlst;
+    }
+    @AuraEnabled
+     public static List<ContentDocument> getContentDocs(id caseid)
+    {   
+    List<ContentDocumentLink> CDLs = [SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = :caseid ];
+    if (CDLs.size() < 1) return new List<ContentDocument>(); 
+    // Make a List of ContentDocument IDs
+    List <Id> CDIdList = new List <Id> ();
+    for (ContentDocumentLink nextCDL : CDLs) {
+        CDIdList.add(nextCDL.ContentDocumentId); }        
+
+    List<ContentDocument> entries = [SELECT Id, Title, FileType, FileExtension FROM ContentDocument WHERE ContentDocument.Id IN :CDIdList];
+        system.debug('return response'+entries.size());
+    return entries;
+     }
+    // End of Attachments and Files Changes.
+    @AuraEnabled
+    public static case getCasePhonenumberValue(id caseid){
+        case cs = [select id , Area_Code__c,Business_Phone__c,Area_Code_Business__c,Mobile_Phone__c,Mobile_Area_Code__c from case where id= :caseid limit 1];
+        return cs;
+    }
+    @AuraEnabled
+    public static boolean deleteCaseFiles(Id deleteFileId){
+        List<ContentDocument> lstOfDocsTodelete = [Select id from ContentDocument where ID =: deleteFileId];
+        system.debug('lstOfDocsTodelete'+lstOfDocsTodelete);
+        if(lstOfDocsTodelete != null && lstOfDocsTodelete.size() > 0)
+        {
+            Database.delete(lstOfDocsTodelete);
+            return true;
+        }
+        return false;
+    }
+    
+    /***************************************************************************************
+* Methods: getAllCountryCode
+* Arguments : None
+* Description : The method returns all the Country Code.
+* @Author : Piyush Ojha Cisco 
+* Created Date : 03-01-2020
+* **************************************************************************************/      
+    @AuraEnabled
+    public static List<CountryAndAreaCode__c> getAllCountryCode() {
+        List<CountryAndAreaCode__c> lstOfCountryCodeNew = CountryAndAreaCode__c.getAll().values();
+         lstOfCountryCodeNew.sort();
+        List<String> lstOfCountryCode = new List<String>();
+        for(CountryAndAreaCode__c objCode : lstOfCountryCodeNew)
+        {
+            lstOfCountryCode.add(objCode.Country_Area_Code__c);
+        }
+        system.debug('lstOfCountryCode'+lstOfCountryCode.size());
+        
+        return lstOfCountryCodeNew;
+    }
+    
+    @AuraEnabled
+    public static String getUserCountry(Id userId) {
+        
+        String userCountry = [Select country from User where Id =: userId ].country;
+        return userCountry;
+        
+    }
+    
+    /***************************************************************************************
+* Methods: getCaseStatus
+* Arguments : None
+* Description : The method returns status of the Case based on that hide Case closure label.
+* @Author : Zensar Technologies 
+* Created Date : 22-01-2020
+* **************************************************************************************/  
+   @AuraEnabled
+   /* public static case getCaseStatus(id caseid){
+        case cs = [select status from case where id= :caseid limit 1];
+        return cs;
+    }*///commented by anuroop 
+    public static string getCaseStatus(id caseid){
+        string cs = [select status from case where id =:caseid limit 1].status ;
+        return cs;
+    }
+    /*******
+     * Restrict Users to Open any closed case which is aged greater than 5 days
+     * Anuroop
+     ******/
+    @AuraEnabled
+    public static boolean canOpenCase(id caseid){
+        system.debug('<<<<<case number>>>>'+Caseid);
+       case cs = [select status,ClosedDate from case where id = :Caseid limit 1];
+       boolean statement ;
+        if(cs.ClosedDate != null)
+         {
+             Integer noOfDays = cs.ClosedDate.date().daysBetween(system.today());
+
+             if (noOfDays > 5){
+                 statement = true;
+             }
+             else if(noOfDays < 5){
+                statement = false ;
+             }
+          }
+        else{
+            statement =  false;
+        }
+        return statement;
+    }
+}

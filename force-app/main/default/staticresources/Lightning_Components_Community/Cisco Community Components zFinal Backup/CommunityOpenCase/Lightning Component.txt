@@ -1,0 +1,214 @@
+<aura:component  implements="lightning:isUrlAddressable,force:appHostable,lightning:hasPageReference,flexipage:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="LTG_ContactSupportComponentClass" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    <aura:attribute name="isLoaded" type="Boolean" default="false"/>
+     <aura:attribute name="selectedBusinessArea" type="String" default="Country Code"  />
+    <aura:attribute name="selectedMobileArea" type="String" default="Country Code" />
+    <aura:attribute name="userCountry" type="String" default="Country Code" />
+    <aura:attribute name="CountryCodeOption" type="Object[]" />
+    <aura:attribute name="channels" type="List"/>
+    <aura:attribute name="showerror" type="boolean" default="" description="Business Phone display validation error"/>
+    <aura:attribute name="displayerror" type="boolean" default="" description="Mobile Phone display validation error"/>
+    
+    <aura:attribute name="CountryOption" type="List" access="global" />
+    <aura:attribute name="userCounty" type="String" default=""  />
+
+ <!--   <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'Business Phone', 'value': 'business'},
+                                                        {'label': 'Mobile Phone', 'value': 'mobile'},
+                                                        {'label': 'Email (Default)', 'value': 'email','readonly':'true'}
+                                                        ]"/>-->
+    <!-- Lightning File Upload Part Starts Piyush Ojha -->
+    <!--changing checkbox group implementation-->
+    <aura:attribute type="boolean" name="emailCheckbox"  default="true"/>
+   <aura:attribute type="boolean" name="businessCheckbox" default="false"/>
+    <aura:attribute type="boolean" name="mobileCheckbox" default="fasle"/>
+    <!--Done-->
+    <aura:attribute name="accept" type="List" default="['.jpg', '.jpeg','.png','.PNG','.pdf','.PDF']"/>
+    <aura:attribute name="multiple" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <aura:attribute name="caseObj" type="Case" />
+    <aura:attribute name="documentIds" type="String[]" />
+    <aura:attribute name="fn" type="List" />
+    <aura:attribute name="fileNames" type="String[]" />
+    <aura:attribute name="disablebutton" type="Boolean" default="false" />
+
+    
+    <aura:attribute name="fileCount" type="Integer" default="0"/>
+    
+    <!-- Duplicate FileName Attributes Starts by PO -->
+    <aura:attribute name="duplicateFilename" type="String" default="" />
+    <aura:attribute name="duplicateFiles" type="String[]" />
+    <!-- Duplicate FileName Attributes Ends by PO -->
+    
+    
+    <!-- Lightning File Upload Part Ends Piyush Ojha -->
+    
+    
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+   <aura:attribute name="mobileChecked" type="boolean" default="false" />
+    <aura:attribute name="businessChecked" type="boolean" default="false" />
+    <aura:attribute name="email" type="string"  />
+    <aura:attribute name="subject" type="string"  />
+    <aura:attribute name="desc" type="string"  />
+    <aura:attribute name="value" type="List" default="['email']"/>
+   <aura:attribute name="businessphone" type="string"  />
+    <aura:attribute name="mobilephone" type="string"  />
+    <aura:attribute name="contactpreference" type="List" default="[]"/>
+    <!-- 'fileName' attribute for display the selected file name -->  
+    <aura:attribute name="fileName" type="String" />
+    <!-- Lightning Input with file type and on file change call the 'handleFilesChange' controller --> 
+   
+    <aura:attribute name="newCase" type="Case"  default="{'sobjectType': 'Case'}"/>
+    
+    <div style="background-color:#f5f5f6 !important; padding:inherit !important;">
+        <div class="headerclass">  
+            <label style="font-size:40px;padding-left: 25px;">{!$Label.c.Community_Open_a_Case_Header}</label>    
+            <div class="slds-align-right" style="padding-right:25px;font-size: 14px;" align="right"> <span style="color:red;">*&nbsp;</span>{!$Label.c.CommunityExamtipline_Required}</div> 
+        </div>
+        
+        <div class="" style="padding-left: 25px; padding-right:25px;padding-bottom:25px;">
+            
+            <div style="background-color: #ffffff !important;">
+                <!-- <div class="slds-text-heading_medium" style=
+                     "padding-left: 32px;
+                      padding-top: 20px;"
+                     >{!$Label.c.Open_a_Case}</div><br /> --> 
+                <div style="padding-left:15% ; padding-right:15%; padding-top:5%; padding-bottom:5%;">
+                    <lightning:recordEditForm objectApiName="Case" onsubmit="{!c.doSave}" aura:id="myform"  onsuccess="{!c.handleSuccess}">
+                        <span style="color:red;">*</span><span class="manualproduct">{!$Label.c.Manually_Select_Products}</span>
+                        <lightning:inputField fieldName="Case_Create_Product__c" required="true" placeholder="Select the Products"  messageWhenValueMissing="{!$Label.c.Open_Case_Product_Placeholder}"  aura:id="MainProduct" variant="label-hidden"  style="width: 70%" class="MainProduct" />
+                        <br/><lightning:inputField fieldName="Case_Create_Sub_Product__c"  aura:id="subproduct" variant="label-hidden"/>
+                     
+                        <br />
+                        <lightning:input label="{!$Label.c.Title}" name="Case Subject" required="true"  aura:id="subject1" class="subject" messageWhenBadInput="Please insert not more than 50 character" maxlength="50"  placeholder="{!$Label.c.Open_Case_title_placeholder}" messageWhenValueMissing="{!$Label.c.Community_title_error}" messageWhenTooLong="{!$Label.c.Community_Title_Length_Error}" onchange="{!c.itemsChange}"/>
+                        <lightning:inputField fieldName="Subject" required="true" aura:id="subject" variant="label-hidden" style="display:none;"/>
+                        
+<!-- New Origin Field Added -->		<lightning:inputField fieldName="Origin" aura:id="origin" variant="label-hidden" style="display:none;"/>
+                        
+                        <br/>
+                        <lightning:inputField fieldName="Description" required="true" aura:id="desc" variant="label-hidden" style="display:none;"/>
+                        <lightning:textarea rows="10" label="{!$Label.c.Description}" required="true"  name="Case Desc" maxlength="20000" value="{!v.desc}" aura:id="desc1"  placeholder="{!$Label.c.Open_Case_description_placeholder}" messageWhenValueMissing="{!$Label.c.Community_Description_Error}" messageWhenTooLong="{!$Label.c.description_edit_case}" onkeyup="{!c.itemsChange}" />
+                        <!-- Contact Preference code refactoring-->
+                        <br/>
+                            <span style="font-size:15px">{!$Label.c.Open_Case_Contact_Preference} :</span>
+                        <div ><br/>
+                          <div class="slds-grid slds-gutters" style="padding-left:12px;">
+                                 	<ui:inputCheckbox aura:id="checkbox"  class="myCheckbox"  value="{!v.emailCheckbox}" label="Email (Default):"  disabled="true"/>
+                                  <div style="padding-left:10px !important;"><label style="font-size:14px; font-family: 'CiscoSans'; font-weight:bolder;">{!v.email}</label></div>
+                             
+                           </div>
+                          <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_3-of-12">
+                                <br/>     <ui:inputCheckbox aura:id="checkbox" class="myCheckbox"  value="{!v.businessCheckbox}" label="Business Phone" change="{!c.handleChange}" />
+                            </div>
+                              <div class="slds-col slds-size_3-of-12">
+                            </div>
+                              <div class="slds-col slds-size_3-of-12">
+                                <br/>  <ui:inputCheckbox aura:id="checkbox" class="myCheckbox"  value="{!v.mobileCheckbox}" label="Mobile Phone"  change="{!c.handleChange}" />
+                            </div>
+                            </div>
+                            <br/>
+                        <div class="slds-grid slds-gutters">
+                          
+                             <div class="slds-col slds-size_2-of-12" style=" white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">
+                                  <lightning:select name="businesscountrycode" required="{!v.businessCheckbox}" class="{!v.businessChecked == true ? 'phoneInputRequired' : 'phoneInputNotRequired'}" label="Country Code" aura:id="businesscountrycode" onchange="{! c.handleAreaChange }" messageWhenValueMissing="Select An Area Code!">
+                                            <option value ="{!v.selectedBusinessArea}">{!v.selectedBusinessArea}</option> 
+                                            <aura:iteration items="{!v.CountryCodeOption}" var="c">
+                                                <option value="{!c.value}" >{!c.text}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                        <aura:if isTrue="{!v.showerror}">
+                                            <label style="color:#c23934; font-size:12px;  font-family: 'CiscoSans'; "> Please Select Country Code.</label>
+                                        </aura:if>
+                                        <lightning:inputField  fieldName="Area_Code_Business__c" style="display:none; white-space: nowrap; overflow: hidden;text-overflow: ellipsis;" variant="label-hidden" aura:id="businessareahidden"/>
+                             </div>
+                            <div class="slds-col slds-size_3-of-12"  style="">
+                                <lightning:input type="phone" pattern="[0-9]*" messageWhenPatternMismatch="Phone Number can only contain numbers." class="{!v.businessCheckbox == true ? 'phoneInputRequired' : 'phoneInputNotRequired' }" label="{!$Label.c.Open_Case_Business_Phone}" name="businessphone" aura:id="business" required="{!v.businessCheckbox}" placeholder="{!$Label.c.Open_Case_Business_Phone_placeholder}" messageWhenValueMissing="{!$Label.c.Business_Phone_error}" onchange="{!c.phoneChange}"/>
+                                   <lightning:inputField fieldName="Business_Phone__c" style="display:none; white-space: nowrap; overflow: hidden;text-overflow: ellipsis;" variant="label-hidden" aura:id="businesshidden" /> 
+                            </div> 
+                                <div class="slds-col slds-size_1-of-12" >
+                                </div>
+                             <div class="slds-col slds-size_2-of-12" style=" white-space: nowrap;overflow: hidden; text-overflow: ellipsis;" >
+                               <lightning:select name="mobilecountrycode" required="{!v.mobileCheckbox}" label="Country Code" class="{!v.mobileCheckbox == true ? 'phoneInputRequired' : 'phoneInputNotRequired'}" aura:id="mobilecountrycode" onchange="{! c.handleAreaChangeMobile }">
+                                            <option value ="{!v.selectedMobileArea}">{!v.selectedMobileArea}</option>
+                                            <aura:iteration items="{!v.CountryCodeOption}" var="c">
+                                                <option value="{!c.value}" >{!c.text}</option>
+                                            </aura:iteration>
+                                        </lightning:select>
+                                           <aura:if isTrue="{!v.displayerror}" >
+                                            <label style="color:#c23934; font-size:12px;  font-family: 'CiscoSans'; "> Please Select Country Code.</label>
+                                        </aura:if>    
+                                      <lightning:inputField  fieldName="Mobile_Area_Code__c" style="display:none;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;" variant="label-hidden" aura:id="mobileareacodehidden"/> 
+                             </div>
+                            <div class="slds-col slds-size_3-of-12">
+                                 <lightning:input pattern="[0-9]*" messageWhenPatternMismatch="Phone Number can only contain numbers." class="{!v.mobileCheckbox == true ? 'phoneInputRequired' : 'phoneInputNotRequired' }" label="{!$Label.c.Open_Case_Mobile_Phone}" name="mobilephone" aura:id="mobile" required="{!v.mobileCheckbox}" placeholder="{!$Label.c.Open_a_Case_Mobile_Phone}" messageWhenValueMissing="{!$Label.c.Mobile_Phone_error}" onchange="{!c.phoneChange}" />
+                                    <lightning:inputField fieldName="Mobile_Phone__c" style="display:none;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;" variant="label-hidden" aura:id="mobilehidden"/> 
+                             </div><br/>  
+                            </div>
+                           </div>
+                        <br/>
+                        
+                           <!-- contact Preference code end -->                        
+                       
+                        <!--depending upon checkbox values display the text in the contactpreference field in SFDC. Field hidden from community layout-->
+                        
+                        <!--    <lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" label="{!$Label.c.Attachments}" 
+                                         multiple="false" accept="'.pdf','.PDF','.jpeg','.png','.gif','.JPEG','.PNG'"/> -->
+                        <br/>
+                        <lightning:fileUpload label="{!$Label.c.Attachments}" multiple="{!v.multiple}" 
+                                              recordId="{!v.recordId}" 
+                                              onuploadfinished="{!c.handleUploadFinished}" />
+                        
+                        
+                         <div class="showFileCountError" style="display:none;"><b>{!$Label.c.Attachment_Limit_Exceed}</b></div>
+                    <div class="showDuplicateError" style="display:none;"><b>Duplicate File Error : The File {!v.duplicateFilename} is already selected ! </b></div>
+                        
+                        <aura:iteration items="{!v.fileNames}" var="file" indexVar="i">
+                            <!-- Delete File Code by PO Starts-->
+                               
+                                 <div class="slds-grid slds-gutters">
+                              <div class="slds-col slds-size_2-of-6">
+                                <li class="slds-list__item slds-m-right_large slds-grid slds-truncate_container_80">
+                                 <span class="slds-m-left_xx-small slds-truncate">
+                                   <label style="color: #00BCEB !important;">*{!file}</label>
+                                 </span>
+                                 </li>
+                                  <!-- <span style="color:red">*{!file}</span>-->
+                              </div>  
+                               <div class= "slds-col slds-size_1-of-6">     
+                                  <lightning:buttonIcon class="deleteButton" iconName="utility:delete" name="{!i}" size="small" variant="bare" alternativeText="Delete" onclick="{! c.handleDeleteFile }" iconClass="dark"/>
+                              </div>                     
+      
+                                    
+                                </div>
+                                 <!-- Delete File Code by PO Ends-->
+                        </aura:iteration>
+                        
+                        <aura:if isTrue="{!v.showLoadingSpinner}">
+                            <div class="slds-text-body_small slds-text-color_error"> {!Label.c.Uploading}... 
+                                <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>
+                            </div>
+                        </aura:if>
+                        <br/>
+                        <div class="slds-page-header" role="banner">
+                               <h1 class="slds-page-header__title slds-m-right_small
+                                       slds-truncate slds-align-left">{!$Label.c.When_You_are_Done}...</h1>
+                        </div>
+                        <br/>
+                        <div class="slds-align_absolute-center" >  
+                            <lightning:button class="buttonclass" label="{!$Label.c.Next}"  disabled="{!v.disablebutton}" variant="Neutral" type="Submit" />
+                        </div>
+                        <!--  <button class="slds-button slds-button_brand" type="Submit"> {!$Label.c.Next} </button> -->
+                        <br></br>
+                    </lightning:recordEditForm>
+                    
+                </div>
+            </div>
+        </div>  
+        
+    </div>
+    
+    
+</aura:component>

@@ -1,0 +1,117 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="isFormOpen" type="boolean" default="false"/>
+    
+    <lightning:button variant="brand"
+                      label="Subscribe"
+                      title="Subscribe"
+                      onclick="{! c.openModel }" />
+    
+    <aura:if isTrue="{!v.isFormOpen}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="color:black">
+                    <header class="slds-modal__header" style="padding:0">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        
+                        
+                     </header>
+                    
+                    <div class="slds-modal__content slds-p-around_small divImg" id="modal-content-id-1">
+					<p class="slds-text-heading_large" style="color:steelblue">Want to Learn More?</p>
+                        <p class="slds-text-heading_small" >Subscribe to Learning at Cisco Communications.</p><br/>
+                        <div class="slds-form">
+						
+                            <div class="slds-form-element slds-form-element_horizontal slds-size--7-of-12">
+                                <label class="slds-form-element__label" for="horizontal-input-id-01">First Name:</label>
+                                <div class="slds-form-element__control">
+                                    <ui:inputText class="slds-input" aura:id="horizontal-input-id-01" required="true"/>
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-form-element_horizontal slds-size--7-of-12">
+                                <label class="slds-form-element__label" for="horizontal-input-id-02">Last Name:</label>
+                                <div class="slds-form-element__control">
+                                    <input type="text" id="horizontal-input-id-02" required="true" class="slds-input" />
+                                </div>
+                            </div>
+                            
+                            <div class="slds-form-element slds-form-element_horizontal slds-size--7-of-12">
+                                <label class="slds-form-element__label" for="horizontal-input-id-03">Email Address:</label>
+                                <div class="slds-form-element__control">
+                                    <ui:inputText class="slds-input" aura:id="horizontal-input-id-03" required="true"/>
+                                </div>
+                            </div>
+                            
+                            <div class="slds-form-element slds-form-element_horizontal slds-size--7-of-12">
+							<label class="slds-form-element__label" for="horizontal-input-id-04">Country</label>
+                                <div class="slds-form-element__control">
+                                                                      
+                                    <ui:inputSelect class="slds-select" aura:id="horizontal-input-id-04" change="{!c.countryChange}" >
+                                        
+                                        <ui:inputSelectOption text="India" label="India" value="India" />
+                                        
+                                    </ui:inputSelect>
+                                </div>
+                                
+                            </div>
+                            
+							<div class="slds-form-element slds-form-element_horizontal slds-size--7-of-12">
+							<label class="slds-form-element__label" for="horizontal-input-id-05">My Cisco Certification Status</label>
+                                <div class="slds-form-element__control">
+                                                                      
+                                    <ui:inputSelect class="slds-select" aura:id="horizontal-input-id-05" change="{!c.certificationChange}" >
+                                        
+                                        <ui:inputSelectOption text="Cisco" label="Cisco" value="Cisco" />
+                                        
+                                    </ui:inputSelect>
+                                </div>
+                                
+                            </div>
+							<br/>
+                            <div class="slds-form-element slds-form-element_horizontal slds-size--7-of-12">
+							<label class="slds-form-element__label" for="horizontal-input-id-06">Interest</label>
+                                <div class="slds-form-element__control">
+                                                                      
+                                    <ui:inputSelect class="slds-select" aura:id="horizontal-input-id-06" change="{!c.interestChange}" >
+                                        
+                                        <ui:inputSelectOption text="Cisco" label="Cisco" value="Cisco" />
+                                        
+                                    </ui:inputSelect>
+                                </div>
+                                
+                            </div>
+                            
+                            
+                            <br/>
+                            <div class="slds-form-element">
+                                <div class="slds-checkbox">
+                                    
+                                    <input type="checkbox" name="default" id="checkbox-unique-id-33" value="checkbox-unique-id-33" />
+                                    <label class="slds-checkbox__label" for="checkbox-unique-id-33">
+                                        <span class="slds-checkbox_faux"></span>
+                                        <span class="slds-form-element__label">I would like to receive email communications about Cisco training and 
+                                            certification programs.
+                                            At any time in the future , if you no longer want to receive email communications , you can opt out by updating your 
+                                            <a href="#">communiation preferences</a>
+                                        </span>
+                                    </label>
+                                    
+                                </div>
+                            </div>		
+                            <div class="slds-align_absolute-center">
+                            <lightning:button variant="brand"
+                                              label="Submit"
+                                              title="Submit"
+                                              />
+                        </div>
+                        </div>
+                        
+                    </div>                   
+                
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

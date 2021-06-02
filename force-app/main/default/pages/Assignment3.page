@@ -1,0 +1,20 @@
+<apex:page controller="AccountCustomController" tabStyle="Account">
+    <apex:form >
+    	<apex:pageBlock title="Account Custom Controller">
+        <apex:pageBlockButtons >
+        	<apex:commandButton value="Save" action="{!saveAccount}" />
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+         <apex:inputField value="{!Account.name}" />
+        <apex:inputField value="{!Account.AccountNumber}"/>
+        <apex:inputField value="{!Account.Email__c}" />
+        <apex:inputField value="{!Account.Website}"/>
+        <apex:inputField value="{!Account.Phone}"/>
+        <apex:inputField value="{!Account.HeadOfficeCountry__c}"/>
+        <apex:inputField value="{!Account.AnnualRevenue}"/>
+        <apex:inputField value="{!Account.NumberOfEmployees}"/>
+            </apex:pageBlockSection>
+        
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

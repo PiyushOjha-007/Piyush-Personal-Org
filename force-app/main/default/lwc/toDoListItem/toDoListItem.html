@@ -1,0 +1,11 @@
+<template>
+    <div class={itemContainer} >
+        <span class="slds-text-heading_label slds-text-title_caps" style="color: aliceblue;">{toDoTaskName} </span>
+        <br/><template if:true={toDoDone}>
+            <span class="slds-text-heading_small slds-text-title_caps" style="color: aliceblue;">
+               Completed On : <lightning-formatted-date-time class="DateClass" value={toDoCompletedDate}  year="numeric" month="short" day="2-digit" 
+                ></lightning-formatted-date-time>
+            </span>
+        </template>
+    </div>
+</template>

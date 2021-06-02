@@ -1,0 +1,36 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+   <aura:attribute name="checkBoxCount" type="Integer" default="0"/>
+    <div class="slds-grid slds-gutters slds-align_absolute-center" style="padding-left:10px;margin-left:1px " align="center" >
+        <ui:inputCheckbox aura:id="Box1"  change="{!c.OncheckboxSelect}"/>
+        <ui:inputCheckbox aura:id="Box2"  change="{!c.OncheckboxSelect1}"/>
+        <div class="slds-col slds-size_1-of-4" >
+          <img src="{!$Resource.ccnawebinar}" style=" width: 378px;"/><br/><br/> 
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+             <img src="{!$Resource.podcasts}" style=" width: 378px;"/><br/><br/>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+           <img src="{!$Resource.trainingvideos}" style=" width: 378px;"/><br/><br/> 
+        </div>
+    </div>
+       <div class="slds-grid slds-gutters slds-align_absolute-center" style="text-align:center;padding-left:10px;margin-left:1px"> 
+        <div class=" slds-col slds-size_1-of-4"  >
+                <a href="#" class="slds-text-heading_medium">CCNA Webinars</a><br/>
+                <p class="slds-text-title" align="center">
+                    Register for free CCNA webinars with <br/> best-selling Cisco Press author Wendell Odom.
+                </p>
+            </div>
+        <div class="slds-col slds-size_1-of-4" >
+                <a href="#" class="slds-text-heading_medium">Training Videos</a><br/>
+                <p class="slds-text-title">
+                    Explore hundreds of IT training videos covering a variety of topics including: DNA, NGFW, ACI, Python, SDN and more.
+                </p>
+            </div>
+        <div class="slds-col slds-size_1-of-4" >
+                <a href="#" class="slds-text-heading_medium">IT Podcasts</a><br/>
+                <p class="slds-text-title">
+                    Access our library of IT podcasts and learn on the go.<br/> Visit our blog to get the links to iTunes and SoundCloud.
+                </p>
+            </div>
+    </div>
+</aura:component>

@@ -1,0 +1,175 @@
+<!--
+File Name: CommunityMyCasesComponent
+Description : The Lightning CommunityMyCasesComponent to display all the cases of logged In User.
+@Author : Piyush Ojha Cisco 
+Created Date : 11-06-2019
+-->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" Controller="MyCase_Controller" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="allData" type="List"/>
+    <aura:attribute name="currentPageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="TotalRecords" type="Integer" />
+    <aura:attribute name="totalPages" type="Integer" default="0"/>
+    <aura:attribute name="pageList" type="List"/>
+    <aura:attribute name="checkBoxvalue" type="String" default = ''/>
+    <aura:attribute name="caseStatus" type="String[]" default="Denied,Duplicate,Solved"/>
+    <aura:attribute name="contactExist" type="Boolean" default = "false"/>
+    <aura:attribute name="cases" type="Case[]" />
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'My Open Case', 'value': 'OpenCases'},
+                                                        {'label': 'My Closed Cases', 'value': 'ClosedCases'}
+                                                        ]"/>
+    <aura:attribute name="value" type="List" default="['OpenCases','ClosedCases']"/>
+    <aura:attribute name="IsSpinner" type="Boolean"/>
+    
+   
+    
+    <div style="background-color:#f5f5f6 !important; padding:inherit !important;">
+        
+        <lightning:navigation aura:id="navService"/>
+      
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+                <div class="headerclass" style="padding-left: 25px;">  
+                    <label style="font-size:40px;">{!$Label.c.My_Cases}</label>    
+                    
+                </div>
+            </div>
+            <div align="right;" style="padding-right: 25px;padding-top:16px;">
+                <div class="slds-col">
+                    <aura:if isTrue="{!v.contactExist}">
+                    <c:UpdateContactInformationButton/>  
+                    </aura:if>
+                    <c:NavigationComponent/>
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid slds-gutters" style="padding-left:25px; padding-bottom:-10px !important;">
+          <div class="slds-col slds-size_2-of-8"  style="padding-top: 25px !important;">
+            <lightning:checkboxGroup  aura:id="mygroup" name="Checkbox Group" label="" options="{!v.options }" value="{!v.value }" onchange="{!c.handleChange }"/>
+            </div>
+            <div class="slds-col slds-size_6-of-8" style="text-align:right; padding-bottom:10px;">
+            <lightning:input  aura:id="nameFilter" placeholder="{!$Label.c.SearchPlaceholder}" onchange="{!c.handleNameFilterChange}" />     
+          </div>
+        </div>
+       <!-- <div class="slds-form" > 
+           
+            <div class="slds-form-element slds-form-element_stacked">
+                 <div class="slds-form-element slds-lookup" data-select="single" style="text-align:left;">
+                <div class="slds-form-element__control" style="padding-left: 25px; padding-right:25px;font-size:14px;font-family:ciscosans;">
+                   <div class="slds-form-element__control" style="text-align: right; ">
+                    </div>
+                </div>
+            </div>
+                </div>
+        </div>-->
+                
+           
+        
+        
+        <!-- New Data Table Code Starts-->
+        <div class="" style="padding-left: 25px; padding-right:25px;padding-bottom:15px;">
+            <aura:if isTrue = "{!v.TotalRecords == 0}">
+                         <div class="labelClass" style="padding-left:15px;background:white;padding-top: 12px;padding-bottom: 12px;"><label> No Cases Found. </label></div>
+              </aura:if>
+            <aura:if isTrue = "{!v.TotalRecords > 0}">
+            <lightning:card title="" >                 
+                
+                <lightning:layout multipleRows="true" horizontalAlign="center">
+                    <lightning:layoutItem padding="around-small" size="12">
+                        
+                        <table class="slds-table slds-table_cell-buffer slds-table_striped" >
+                            <thead class="slds-text-title_caps" >
+                                <tr  style="font-size:14px">
+                                    <th scope="col" class="BorderColor"><div class="slds-truncate" title="Case No">{!$Label.c.Case_No}</div></th>
+                                    <th scope="col" class="BorderColor"><div class="slds-truncate" title="Title">{!$Label.c.Title}</div></th>
+                                    <th scope="col" class="BorderColor"><div class="slds-truncate" title="Product">{!$Label.c.Type}</div></th>
+                                    <th scope="col" class="BorderColor"><div class="slds-truncate" title="Date/Time Opened">{!$Label.c.Created}</div></th>
+                                    <th scope="col" class="BorderColor"><div class="slds-truncate" title="Status">{!$Label.c.Status}</div></th>
+                                </tr>
+                            </thead>                    
+                            <tbody>
+                                <!-- Use the Apex model and controller to fetch server side data -->
+                                <aura:iteration items="{!v.data}" var="case" indexVar="index">
+                                    
+                                    <tr class="{!((index%2 == 0)?'whiteSpan':'greySpan')}" style="font-size:14px;" >
+                                        <td><div class="slds-truncate" title="{!case.CaseNumber}" data-value="{!case.Id}" ><a onclick="{!c.onCaseClick}" data-attriVal="{!case.CaseNumber}" id="{!case.Id}">{!case.CaseNumber}</a></div></td>
+                                        <th scope="row"><div class="slds-truncate" title="{!case.Subject}">{!case.Subject}</div></th>
+                                        <td><div class="slds-truncate" title="{!case.Queue__c}">{!case.Queue__c}</div></td>
+                                        
+                                        <td><div class="slds-truncate" title="{!case.CreatedDate}"><!--{!case.CreatedDate}-->
+                                            <lightning:formattedDateTime value="{!case.CreatedDate}" year="numeric" month="numeric" day="numeric"/>
+                                            </div></td>
+                                        
+                                        <td>
+                                            <div class="slds-truncate" title="{!case.Status}">
+                                                
+                                                <span class="{! ((case.Status == 'Unresolved' || case.Status =='???' || case.Status == '???' )? 'orangeSpan': 'greenSpan' )  }" ><b>{!case.Status}</b>
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                </aura:iteration>
+                                <!-- Lightning Cart Start Here-->
+                                <!-- End here-->
+                            </tbody>
+                        </table>
+                        
+                    </lightning:layoutItem>
+                    <aura:if isTrue = "{!v.TotalRecords > 10}">
+                    <lightning:layoutItem padding="around-small" flexibility="auto">
+                        <lightning:button label="{!$Label.c.First_Pagination}" variant="brand" iconName="utility:left" iconPosition="left"
+                                          onclick="{!c.onFirst}" disabled="{! v.currentPageNumber == 1}"/> 
+                        <lightning:button iconName="utility:chevronleft" iconPosition="left"
+                                          onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/> 
+                        
+                        <!-- <lightning:button variant="base" label="Previous" iconPosition="left"
+                                  onclick="{!c.onPrev}" disabled="{! v.currentPageNumber == 1}"/> -->
+                        
+                        <span class="slds-p-horizontal_x-small">
+                            <a onclick="{!c.processMe}" name="1" 
+                               class="{! (v.currentPageNumber == 1) ? 'selected' : ''}">1</a>
+                        </span>
+                                                
+                        <aura:iteration items="{!v.pageList}" var="item">
+                            <span class="slds-p-horizontal_x-small">
+                                <a onclick="{!c.processMe}" name="{!item}"
+                                   class="{! (v.currentPageNumber == item) ? 'selected' : ''}">{!item}
+                                </a>
+                            </span>
+                        </aura:iteration>
+                        
+                        <span class="slds-p-horizontal_xxx-small">
+                            
+                        </span>
+                        <span class="slds-p-horizontal_x-small">
+                            <a onclick="{!c.processMe}" name="{!v.totalPages}"
+                               class="{! (v.currentPageNumber == v.totalPages) ? 'selected' : ''}"> {!v.totalPages} </a>
+                        </span>
+                        <!--  <lightning:button variant="base" label="Next" iconPosition="right" 
+                                  disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/> -->
+                        <lightning:button iconName="utility:chevronright" iconPosition="right" 
+                                          disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onNext}"/>
+                        <lightning:button label="{!$Label.c.Next_Pagination}" variant="brand" iconName="utility:right" iconPosition="right" 
+                                          disabled="{! v.currentPageNumber == v.totalPages}" onclick="{!c.onLast}"/> 
+                        
+                        </lightning:layoutItem>
+                    </aura:if>
+                </lightning:layout>
+                
+            </lightning:card>
+                </aura:if>
+            
+        </div>
+        <!-- New Data Table Code Ends-->
+    </div>
+    
+</aura:component>

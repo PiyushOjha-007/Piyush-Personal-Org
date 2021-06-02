@@ -1,0 +1,30 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="clickOnSubscribe" type="boolean" default="false"/>
+    
+    <div class="slds-grid slds-gutters" style="background:#005073;color:white;padding:5px;height: 180px">
+        <div class="slds-col slds-size_1-of-2">
+            <p class="slds-text-heading_large">How to Join</p><br/>
+            <p class="slds-text-body_regular" >Joining the Cisco Learning Network is as simple as 
+                registering. Do it now and move one step closer to career self-discovery and success.
+            </p><br/>
+            <lightning:button class="btn" variant="brand"
+                              label="Register/Log In"
+                      title="Register/Log In"
+                      onclick="{!c.registerLogIn }" />
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+            <p class="slds-text-heading_large">Subscribe to our newsletters</p><br/>
+            <p class="slds-text-body_regular">Subscribe to Learning@Cisco Communications for additional resources delivered<br/>
+            right to your inbox.
+            </p><br/>
+            <lightning:button class="btn" variant="brand"
+                      label="Subscribe"
+                      title="Subscribe"
+                      onclick="{! c.Subscribe }" />
+        </div>
+    </div>
+    <aura:if isTrue="{!v.clickOnSubscribe}">
+        <c:CLNSubscriptionForm isFormOpen="{!v.clickOnSubscribe}"/>
+    </aura:if>
+</aura:component>

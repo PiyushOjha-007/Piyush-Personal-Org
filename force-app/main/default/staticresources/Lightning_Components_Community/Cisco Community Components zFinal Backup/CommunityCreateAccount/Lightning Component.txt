@@ -1,0 +1,123 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" controller="Create_Account_ApexClass" >
+    
+    <aura:attribute name="Error" type="String" default=""/>
+    <aura:attribute name="EmailExistError" type="boolean" default="false"/>
+    <aura:attribute name="CountryCodeOption" type="Object[]" />
+    <aura:attribute type="String" name="saveSelectedCountry"/>
+    <aura:attribute type="String" name="ltngTimeZone"/>
+    <aura:attribute type="String" name="selectedAreaCode" default= "Country Code"/>
+    <aura:attribute type="String" name="ltnglanguage" default= ""/>
+    <aura:attribute name="email" type="String"/> 
+    <aura:attribute name="channels" type="List"/>
+    <aura:attribute name="CountryOption" type="List" access="global" />
+    <aura:handler name="init" value="{!this}" action="{!c.jsLoaded}" access="global" />
+    <aura:attribute name="pageReference" type="Object" access="global"/>
+    <lightning:navigation aura:id="navService" />
+    <aura:handler name="change" value="{!v.value}" action="{!c.valueChangeValidation}"/>
+    <aura:attribute name="newCon" type="Contact"
+                    default="{ 'sobjectType': 'Contact',
+                             'FirstName': '',
+                             'LastName':'',
+                             'Email' : '',
+                             'Country_Area_Code__c':'',
+                             'Phone' :'',
+                             'AccountId' :'0016300000f6gTHAAY',
+                             'Cisco_ID_CSCO__c' : '',
+                             'Country__c' : '',
+                             'Cisco_com_Login__c' :'' }" access="global"/>
+    
+    <aura:attribute name="mylabel" type="String" access="global"/>
+    <div style="background-color:#f5f5f6 !important; padding:inherit !important;">
+        <div class="headerclass">  
+            <label style="font-size:40px; padding-left: 25px;"> {!$Label.c.Create_an_Account}</label>    
+             <div class="slds-align-right" style="padding-right:25px;font-size:14px;" align="right"> <span style="color:red;">*&nbsp;</span>{!$Label.c.Community_required_Community}</div> 
+        </div>
+        
+        <div class="" style="padding-left:25px; padding-right:25px;padding-bottom:25px;">
+            
+            <div style="background-color: #ffffff !important;font-size: 14px;">
+                
+                <h5 class="slds-text-heading_small" style="visibility: hidden">Error Message </h5>
+                <br/>
+                <aura:if isTrue="{!v.EmailExistError}">
+                <p class="slds-align_absolute-center" style="color:red;">{!$Label.c.Community_CreateAccount_EmailExist_Error}</p>                
+                </aura:if>
+                
+                
+                <div class="slds-grid slds-gutters slds-align_absolute-center" >
+                    <div class="slds-col">
+                        <div class="slds-p-bottom_large slds-p-left_large" style="width:100%;">
+                            <div class="slds-grid slds-gutters" style="width:100%;">
+                                <div class="slds-col" >
+                                    <lightning:input label="{!$Label.c.portal_firstname}" aura:id="firstname" name="firstname" value="{!v.newCon.FirstName}"  placeholder="{!$Label.c.FirstName_Placeholder}"  messageWhenValueMissing="{!$Label.c.Community_CreateAccount_Error_Firstname}" required="true"/> 
+                                </div>
+                                <div class="slds-col">
+                                    <lightning:input label="{!$Label.c.portal_lastname}" name="lastname" value="{!v.newCon.LastName}" required="true"  placeholder="{!$Label.c.Lastname_Placeholder}" aura:id="lastname" messageWhenValueMissing="{!$Label.c.Community_CreateAccount_Error_lastname}"/> 
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-gutters slds-p-top_medium" style="width:100%;">
+                                <div class="slds-col" style="width:10px;">
+                                    <lightning:input label="{!$Label.c.CommunityEmailAddress}" name="emailaddress" value="{!v.newCon.Email}" placeholder="{!$Label.c.EmailAddress_Placeholder}" messageWhenPatternMismatch="Invalid Email Address !" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required="true" aura:id="email" messageWhenValueMissing="{!$Label.c.Community_CreateAccount_Error_Email}"/> 
+                                </div>
+                                <div class="slds-col">
+                                    
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-gutters slds-p-top_medium" style="width:100%;">
+                                <div class="slds-col" style="width:50%;" >
+                                    <lightning:input label="{!$Label.c.CSCO_ID_Testing_ID}" type="text" aura:id="csco"  name="CSCOID" value="{!v.newCon.Cisco_ID_CSCO__c}" messageWhenTooShort="{!$Label.c.CSCO_Error_message}" placeholder="{!$Label.c.CSCO_ID_Placeholder}" maxlength="12" minlength="12"  /> 
+                                </div>
+                                <div class="slds-col" style="width:50%;">
+                                    <lightning:input label="{!$Label.c.Cisco_com_user_ID}" aura:id="ciscologin" name="ciscoId" value="{!v.newCon.Cisco_com_Login__c}"  placeholder="{!$Label.c.Cisco_user_ID_placeholder}"   /> 
+                                   <!-- <lightning:input label="{!$Label.c.Cisco_com_user_ID}" aura:id="ciscologin" name="ciscoId" value="{!v.newCon.Cisco_com_Login__c}" messageWhenPatternMismatch="{!$Label.c.Cisco_email_address_error}"  placeholder="{!$Label.c.Cisco_user_ID_placeholder}" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"  /> -->
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-gutters slds-p-top_medium" style="width:100%;">
+                                <div class="slds-col" style="width:15%;">
+                                 <!--  <lightning:combobox name="countrycode" placeholder="Select Area Code" label="Area Code" aura:id="countrycode" value="{!v.newCon.Country_Area_Code__c}"   options="{!v.CountryCodeOption}"/> -->
+                                    
+                                     <lightning:select name="countrycode1" aura:id="countrycode" label="Country Code" onchange="{!c.handleChange}" >
+                                         <option value ="{!v.selectedAreaCode}">{!v.selectedAreaCode}</option>
+                                        <aura:iteration items="{!v.CountryCodeOption}" var="c">
+                                            <option value="{!c.value}" >{!c.text}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                    
+                                     
+                                </div>
+                                
+                                <div class="slds-col" style="width:35%;">
+                                    <lightning:input label="{!$Label.c.portal_phonenumber}" name="phone" pattern="[0-9]*" messageWhenPatternMismatch="Phone Number can only contain numbers." value="{!v.newCon.Phone}"  placeholder="{!$Label.c.Phone_number_placeholder}"  /> 
+                                </div>
+                                <div class="slds-col" style="width:50%;">
+                                    <lightning:select name="CountryPicklist"  required="true"  aura:id="CountryPicklist" label="{!$Label.c.Country}"  >
+                                        <option value ="">{!$Label.c.Country_Placeholder}</option>
+                                        <aura:iteration items="{!v.CountryOption}" var="c">
+                                            <option value="{!c.value}" >{!c.text}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>
+                            </div><br />
+                            <div class="slds-align_absolute-center"> 
+                                {!$Label.c.Cisco_Term_and_condition_text1}&nbsp;<a href="https://www.cisco.com/c/en/us/about/legal/terms-conditions.html" target="_blank">{!$Label.c.Cisco_Terms_and_Conditions}</a>&nbsp;{!$Label.c.and_the}&nbsp;<a href="https://www.cisco.com/c/en_in/about/legal/privacy-full.html" target="_blank">{!$Label.c.Cisco_Online_Privacy_Statement}</a>{!$Label.c.Cisco_Online_Privacy_StatementJapanese}<br/>
+                                
+                            </div><br />
+                            <div class="slds-align_absolute-center" >
+                                <lightning:button class="buttonclass" label="{!$Label.c.Community_CreatedAccount_Register}" title="Register" variant="Neutral" onclick="{! c.registeruser }" />
+                                <!--  <lightning:button  variant="brand" label="{!$Label.c.portal_createaccount}" title="Register" onclick="{! c.registeruser }" /> -->
+                            </div> 
+                            <br/>
+                            <div align="center" style="font-size:14px;font-family:CiscoSansTTExtraLight;">
+                                <span >
+                                    <a href="{!(join('/s',$Label.c.CommunityBaseUrl,'/login'))}" style="color:#009EDC;font-size:14px;font-family:CiscoSans;">
+                                        {!$Label.c.Cancel}</a>
+                                </span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

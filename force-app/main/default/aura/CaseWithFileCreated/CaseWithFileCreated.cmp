@@ -1,0 +1,24 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:isUrlAddressable,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+     <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:attribute name="caseID" type="String" />
+    
+    <div style="background-color:#f5f5f6 !important;color:black; padding:inherit !important;">
+        <div class="headerclass">  
+            <label style="font-size:40px;padding-left: 35px;">Your Case has been submitted</label>    
+        </div>
+        <div  style="padding-left: 35px; padding-right:35px;">
+            
+            <div style="background-color: #ffffff !important;font-size: 14px;">
+                <div class="slds-text-heading_medium" style="padding-left: 32px;padding-top: 20px;">
+                    <b>This is recordID {!v.recordId} </b><br/>
+                    Case Reference ID : {!v.caseID}
+                </div><br/>
+                <div style="font-size: 34px;padding-left: 32px" >
+                    Thanks for get in touch with us.
+                </div><br/><br/><br/>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

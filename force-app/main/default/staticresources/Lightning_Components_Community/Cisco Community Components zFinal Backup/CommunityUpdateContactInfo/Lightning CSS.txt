@@ -1,0 +1,44 @@
+.THIS .buttonclass:hover{
+    box-shadow: 0 0 0 0 transparent;
+    background-color: #16afda;
+    color: #ffffff;
+}
+.THIS .buttonclass {
+   border-radius: 30px 30px 30px 30px; 
+    width:160px;
+    height:40px;
+    background-color: #00BCEB; 
+    color:#ffffff;
+    border: 1px solid #00bceb;
+    font-weight: bolder;
+}
+.THIS{
+   font-family: 'ciscoSans';
+   font-size: 14px; 
+}
+@font-face {
+    font-family: 'CiscoSans';
+    font-style:normal;
+    font-weight:400;
+    src: url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTRegular.woff2') format('woff2'), url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTRegular.woff') format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+.THIS .headerclass{
+    font-family:'CiscoSansTTExtraLight';
+    font-size: 40px;
+}
+@font-face {
+    font-family: 'CiscoSansTTExtraLight';
+    font-style:normal;
+    font-weight: 100;
+    font-color:#58585B;
+    src: url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTExtraLight.woff2') format('woff2'), url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTExtraLight.woff') format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+.THIS .slds-col--padded{
+    padding:inherit !important;
+}
+.THIS .slds-form-element__label{
+    font-size:14px;
+}

@@ -1,0 +1,157 @@
+/***********************************************************************************
+* File Name: CommunityUpdateContact_Controller
+* Description : The Apex Server Side Controller for CommunityUpdateContactComponent
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-07-2019
+* ***********************************************************************************/
+
+public class CommunityUpdateContact_Controller {
+    
+/***************************************************************************************
+* Methods: getContactDetail
+* Arguments : None
+* Description : The method returns the contact Details associated with the Logged In user
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-07-2019
+* **************************************************************************************/
+    @AuraEnabled
+    public static List<ContactWrapper> getContactDetail() 
+    {
+        try
+        {
+            List<ContactWrapper> contactList = new List<ContactWrapper>();
+            List<Contact> lstOfContact = new List<Contact>();
+            User userObj = [Select id,name,Email,ContactId from User where Id =: Userinfo.getUserId() LIMIT 1 ];
+            system.debug('userObj : '+userObj.ContactId);
+            system.debug('userObj : '+userObj);
+            if(userObj != null && userObj.contactid != null)
+            {
+                lstOfContact = [Select email,Phone,Firstname,Country_Area_Code__c,Cisco_com_Login__c,lastname,country__c, Id,Cisco_ID_CSCO__c,Country_Code__c, Area_Code__c From Contact where Id =: userObj.ContactId];
+            }
+            if(lstOfContact != null && lstOfContact.size() > 0)
+            {
+                system.debug('lstOfContact : '+lstOfContact);
+                for(Contact objCon : lstOfContact)
+                {
+                    ContactWrapper objWrap = new ContactWrapper();
+                    objWrap.conEmail = objCon.email;
+                    objWrap.conCiscoId =  objCon.Cisco_ID_CSCO__c;
+                    objWrap.conFirstName = objCon.FirstName;
+                    objWrap.conLastName = objCon.LastName;
+                    objWrap.conCscoLogin = objCon.Cisco_com_Login__c;
+                    objWrap.conPhone = objCon.Phone;
+                    objWrap.conCountry = objCon.Country__c;
+                    objWrap.conCountryAreaCode = objCon.Country_Area_Code__c;
+                    contactList.add(objWrap);
+                }
+                
+            }
+            system.debug('contactList :'+contactList);
+            if(contactList != null)
+            {
+                return contactList;
+            }
+            
+        }
+        catch(Exception e)
+        {
+            system.debug('Exception :'+e+' Line Number :'+e.getLineNumber());
+        }
+        return null;
+    }
+    
+/***************************************************************************************
+* Methods: updateContactInfo
+* Arguments : Contact object reference
+* Description : This method returns True if the associated record is updated successfully.
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-11-2019
+* **************************************************************************************/   
+    @AuraEnabled
+    public static boolean updateContactInfo(Contact objCon) 
+    {
+        system.debug('objCon :'+objCon);
+        List<Contact> lstOfUpdatedContact = new List<Contact>();
+        try
+        {
+            for(User objUser : [Select id,name,email,ContactId from User where Id =: Userinfo.getUserId()  limit 1])
+            {
+                system.debug('PO 1'+objUser);
+                Contact conObj = new Contact(Id=objUser.ContactId);
+                conObj.FirstName = objCon.FirstName;
+                conObj.LastName = objCon.LastName;
+                conObj.Cisco_com_Login__c = objCon.Cisco_com_Login__c; 
+                conObj.Phone = objCon.Phone;
+                conObj.Country__c = objCon.Country__c; 
+                conObj.Country_Area_Code__c = objCon.Country_Area_Code__c;
+                lstOfUpdatedContact.add(conObj);
+                system.debug('PO lstOfUpdatedContact'+lstOfUpdatedContact);
+            }
+            
+            if(lstOfUpdatedContact != null && lstOfUpdatedContact.size()>0)
+            {
+                List<Database.SaveResult> results = Database.update(lstOfUpdatedContact,false);
+                system.debug('RESULT :'+results);
+                for (Database.SaveResult result : results) 
+                {
+                    if (result.isSuccess())
+                    {
+                        system.debug('RESULT STATUS :'+result.isSuccess());
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            
+            return false;
+        }
+        catch(Exception e)
+        {
+            system.debug('Exception'+e+' Line Number :'+e.getLineNumber());
+        }
+        return false;
+    }
+    
+     @AuraEnabled
+    public static List<CountryAndAreaCode__c> getAllCountryCode() {
+        List<CountryAndAreaCode__c> lstOfCountryCodeNew = CountryAndAreaCode__c.getAll().values();
+        lstOfCountryCodeNew.sort();
+        List<String> lstOfCountryCode = new List<String>();
+        for(CountryAndAreaCode__c objCode : lstOfCountryCodeNew)
+        {
+            lstOfCountryCode.add(objCode.Country_Area_Code__c);
+        }
+        system.debug('lstOfCountryCode'+lstOfCountryCode.size());
+        
+        return lstOfCountryCodeNew;
+    }
+    
+    
+    
+    public class ContactWrapper
+    {
+        @AuraEnabled
+        public String conEmail {get;set;}
+        @AuraEnabled
+        public String conCiscoId {get;set;}
+        @AuraEnabled
+        public String conFirstName {get;set;}
+        @AuraEnabled
+        public String conLastName {get;set;}
+        @AuraEnabled
+        public String conCscoLogin {get;set;}
+        @AuraEnabled
+        public String conPhone {get;set;}
+        @AuraEnabled
+        public String conCountry {get;set;}
+        @AuraEnabled
+        public String conCountryAreaCode {get;set;}
+        
+        
+        
+    }
+    
+}

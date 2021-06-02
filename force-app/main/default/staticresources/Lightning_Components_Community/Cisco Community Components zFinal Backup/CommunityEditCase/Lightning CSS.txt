@@ -1,0 +1,105 @@
+.THIS .phoneInputRequired
+{
+    font-size:12px;
+    
+}
+.THIS .phoneInputNotRequired
+{
+    font-size:12px;
+    
+}
+.THIS .selectClass
+{
+    margin-top:-20px;
+    font-size:13px;
+}
+.THIS .slds-form-element__label
+{
+    font-size:14px;
+    margin-right:40px;
+    width:max-content;
+    
+}
+.THIS .uiInput--default .form-element__label {
+    padding-left: 15px !important;
+    margin-bottom: none !important;
+    margin-top:5px;
+}
+.THIS .myCheckbox{
+  display: inline-block;
+  float: left;
+  padding-left:15px; 
+  margin-top: 1px !important;  
+}
+
+.THIS .buttonclass:hover{
+    box-shadow: 0 0 0 0 transparent;
+    background-color: #16afda;
+    color: #ffffff;
+}
+.THIS .buttonclass {
+   border-radius: 30px 30px 30px 30px; 
+    width:160px;
+    height:40px;
+    background-color: #00BCEB; 
+    color:#ffffff;
+    border: 1px solid #00bceb;
+    font-weight: bolder;
+}
+.THIS .showFileCountError
+{
+    display:flex;
+    color:red;
+    
+}
+.THIS .showDuplicateError
+{
+    display:flex;
+    color:red;
+    
+}
+.THIS .slds-truncate
+{
+    font-size:13px;
+}
+.THIS .slds-col--padded{
+    padding:inherit !important;
+}
+.THIS .slds-hidden{
+    height:1em !important;
+}
+.THIS{
+   font-family: 'ciscoSans';
+   font-size: 14px; 
+}
+@font-face {
+    font-family: 'CiscoSans';
+    font-style:normal;
+    font-weight:400;
+    src: url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTRegular.woff2') format('woff2'), url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTRegular.woff') format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+.THIS .headerclass{
+    font-family:'CiscoSansTTExtraLight';
+    font-size: 40px;
+}
+@font-face {
+    font-family: 'CiscoSansTTExtraLight';
+    font-style:normal;
+    font-weight: 100;
+    font-color:#58585B;
+    src: url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTExtraLight.woff2') format('woff2'), url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTExtraLight.woff') format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+.THIS .deleteButton {
+    color:red;
+    left:15px;
+}
+.THIS .slds-textarea {
+    height:150px !important;
+}
+.THIS .accordionclass{
+    word-break: break-word;
+    white-space: pre-wrap;
+    max-width: 96%;
+}

@@ -1,0 +1,8 @@
+<apex:page standardController="Account" recordSetVar="accounts" >
+    
+    <apex:pageBlock title="Account Table">
+        	<apex:form >
+        	<apex:commandButton value="Save" action="{}"/>
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

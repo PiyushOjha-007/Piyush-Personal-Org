@@ -1,0 +1,142 @@
+/***********************************************************************************
+* File Name: CommunityMyCasesComponentHelper
+* Description : The CLient Side Helper for CommunityMyCasesComponent
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-06-2019
+* ***********************************************************************************/
+({
+   getCaseList: function(component,event,helper,statusValue) {
+        var action = component.get("c.getCase");
+        var statusValue = component.get("v.checkBoxvalue");
+        // Set up the callback
+        
+        action.setParams({ "statusValue" : statusValue });
+        action.setCallback(this,function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                console.log('Response Time: '+((new Date().getTime())-requestInitiatedTime));
+                var dataLength = response.getReturnValue().length;
+                component.set("v.TotalRecords",dataLength);
+                var pageSize = component.get("v.pageSize");
+                var totalPages = Math.ceil(dataLength/pageSize);
+                 component.set("v.totalPages", totalPages);
+               // component.set("v.totalPages", Math.ceil(response.getReturnValue().length/component.get("v.pageSize")));
+                component.set("v.allData", response.getReturnValue());
+                component.set("v.currentPageNumber",1);
+                
+                helper.buildData(component, helper);
+            }
+        });
+        var requestInitiatedTime = new Date().getTime();
+        $A.enqueueAction(action);
+    },
+    getSearchCaseList: function(component,helper) {
+        
+        var action=component.get('c.searchByText');
+        const searchText = component.find("nameFilter").get("v.value");
+        console.log('Here Inside the Seacrh Helper',searchText);
+        console.log('IS EMPTY STRING ',searchText == '');
+        action.setParams({"searchText": searchText});
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+              
+            //component.set("v.cases", response.getReturnValue());
+            if(state == 'SUCCESS'){
+                var searchData = response.getReturnValue(); 
+                
+                component.set("v.data", response.getReturnValue());
+                
+                var dataLength = response.getReturnValue().length;
+                component.set("v.TotalRecords",dataLength);
+                var pageSize = component.get("v.pageSize");
+                var totalPages = Math.ceil(dataLength/pageSize);
+                 component.set("v.totalPages", totalPages);
+               // component.set("v.totalPages", Math.ceil(response.getReturnValue().length/component.get("v.pageSize")));
+                component.set("v.allData", response.getReturnValue());
+                component.set("v.currentPageNumber",1);
+                
+                
+                helper.buildData(component, helper);
+                console.log('In SUccess Helper 1 ALL DATA',component.get("v.data"));
+                console.log('Nothing Happened');
+            }
+            });
+            $A.enqueueAction(action);
+        
+    },
+    
+    //Helper Method Define //
+    
+    
+    
+    /*
+     * this function will build table data
+     * based on current page selection
+     * */
+    buildData : function(component, helper) {
+        console.log('IN BUILD DATA');
+        var data = [];
+        var pageNumber = component.get("v.currentPageNumber");
+        console.log('In Build pageNumber'+pageNumber);
+        var pageSize = component.get("v.pageSize");
+        console.log('In Build pageSize'+pageSize);
+        var allData = component.get("v.allData");
+        console.log('In Build allData'+allData);
+        var x = (pageNumber-1)*pageSize;
+        
+        //creating data-table data
+        for(; x<(pageNumber)*pageSize; x++){
+            if(allData[x]){
+            	data.push(allData[x]);
+            }
+        }
+        component.set("v.data", data);
+        
+        helper.generatePageList(component, pageNumber);
+    },
+    
+    /*
+     * this function generate page list
+     * */
+    generatePageList : function(component, pageNumber){
+        
+        pageNumber = parseInt(pageNumber);
+        var pageList = [];
+        var totalPages = component.get("v.totalPages");
+        if(totalPages > 1){
+            if(totalPages <= 10){
+                var counter = 2;
+                for(; counter < (totalPages); counter++){
+                    pageList.push(counter);
+                } 
+            } else{
+                if(pageNumber < 5){
+                    pageList.push(2, 3, 4, 5, 6);
+                } else{
+                    if(pageNumber>(totalPages-5)){
+                        pageList.push(totalPages-5, totalPages-4, totalPages-3, totalPages-2, totalPages-1);
+                    } else{
+                        pageList.push(pageNumber-2, pageNumber-1, pageNumber, pageNumber+1, pageNumber+2);
+                    }
+                }
+            }
+        }
+        
+        component.set("v.pageList", pageList);
+    },
+    checkContactOfUser : function(component,event,helper,statusValue) {
+        var action = component.get("c.checkUserContact");  
+        action.setCallback(this,function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                
+                var contactStatus = response.getReturnValue();
+                console.log('Contact Exist :',contactStatus);
+                 component.set("v.contactExist",contactStatus);
+            }
+        });
+        
+        $A.enqueueAction(action);
+    }
+   
+ })

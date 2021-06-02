@@ -1,0 +1,27 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" controller="MyRetailer_Controller" access="global" >
+	
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="allDrink" type="List" />
+    <aura:attribute name="drinkCount" type="Integer" default="0"/>
+    
+    
+    <lightning:layout multipleRows="true">  
+        <aura:iteration items="{!v.allDrink}" var="item" >
+            <lightning:layoutItem padding="around-small" size="4">  
+                
+                <fieldset class="slds-box slds-theme--default slds-container--medium"  >
+                    <legend id="newaccountform" style="color:grey" class="slds-text-heading--x-small slds-p-vertical--small"></legend>
+                    <label style="font-size:14px;text-align:right;" align="right" >{!item.Name}</label> <br/>
+                    <ui:outputRichText aura:id="outputRT" class="imgClass" value="{!item.Drink_Image__c}" /><br/>
+                    <label style="font-size:12px;text-align:right;" align="right" >{!item.Price__c} $</label>
+                     
+                <br/>
+                    <lightning:button name="{!item}" variant="brand" onclick="{! c.addToCart }" iconName="utility:cart" iconPosition="right"  ><label style="font-size:10px;" >Add To Cart</label></lightning:button>
+                </fieldset>
+                
+            </lightning:layoutItem>
+        </aura:iteration>
+    </lightning:layout>
+    
+    
+</aura:component>

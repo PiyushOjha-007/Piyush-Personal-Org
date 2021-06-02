@@ -1,0 +1,27 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <lightning:carousel disableAutoRefresh="false" disableAutoScroll="false">
+        <lightning:carouselImage
+                                 src = "{!$Resource.deal1}"
+                                 header = "Pizzas Starting at 199 $"
+                                 description = "WOW Everyday Value -Medium Pan Pizzas Starting @ Rs.199 Each"
+                                 alternativeText = "Get Amazing value, select 2 pizzas worth Rs.199 each"
+                                 href = "https://piyutest-developer-edition.ap5.force.com/MyRetailerSpace/s/hotdeals/">
+        </lightning:carouselImage>	
+        <lightning:carouselImage
+                                 src = "{!$Resource.deal2}"
+                                 header = "Family Meals Triple Treat Box"
+                                 description = "Super Saver Meal for 4 starting at Rs.699 (Save Upto 40%)"
+                                 alternativeText = "Any 2 Medium Pizzas, 1 Garlic Bread Stix, 1 Dip, 1 Potato Poppers, 1 Tandoori Pocket Paneer"
+                                 href = "https://piyutest-developer-edition.ap5.force.com/MyRetailerSpace/s/hotdeals/">
+        </lightning:carouselImage>
+        <lightning:carouselImage
+                                 src = "{!$Resource.deal3}"
+                                 header = "All in One"
+                                 description = "Magic Pizza Box (4 Veg Pizzas) @ Rs. 395"
+                                 alternativeText = "4 Personal Magic pizzas ( 1 Onion, 1 Corn, 1, 1 Paneer Capsicum, 1 Soya Onion)"
+                                 href = "https://piyutest-developer-edition.ap5.force.com/MyRetailerSpace/s/hotdeals/">
+        </lightning:carouselImage>
+    </lightning:carousel>
+    
+</aura:component>

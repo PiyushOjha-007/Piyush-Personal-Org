@@ -1,0 +1,19 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="UserInfoController" >
+	<aura:attribute name="options" type="List" access="Global"/>
+    <aura:attribute name="selectedValue" type="String" access="Global" default="None"/>
+    <aura:method name="barMethod" action="{!c.bar}"
+      description="bar controller function" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <article class="slds-card" >
+    <div class="slds-text-title_caps" text-align="center">Let's Find out the Answers Given...</div>
+      <!--  <lightning:combobox name="select" aura:id="select" label="Many Options" placeholder="Select a User Option" options="{!v.options}" onchange="{! c.onChange}"/> -->
+                                                                                                                                                  
+        
+    <lightning:select name="select" label="Select a User :- " aura:id="select" onchange="{!c.onChange }" value="{!v.selectedValue}" >
+        <aura:iteration items="{!v.options}" var="option">
+            <option value="{!option.Name}" label="{!option.Name}" selected="{!option.selected}"/>
+        </aura:iteration>
+    </lightning:select> 
+             </article>
+   <c:UserSpecificQA selectedUser="{!v.selectedValue}" />
+</aura:component>

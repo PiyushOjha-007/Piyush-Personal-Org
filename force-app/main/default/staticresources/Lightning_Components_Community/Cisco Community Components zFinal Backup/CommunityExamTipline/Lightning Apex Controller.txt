@@ -1,0 +1,207 @@
+public class LTG_ExamTiplineClass {
+    
+    @AuraEnabled public static string email{get;set;} 
+    
+    @AuraEnabled
+    public static string getEmail(){
+        System.debug('ProfileId'+userinfo.getProfileId());
+        if(userinfo.getUserEmail() != null && userinfo.getProfileId() != System.Label.Community_Profile)
+        {
+            email = userinfo.getUserEmail();
+        }
+        else
+        {
+            email = '';
+        }
+        return email;
+    }
+    @AuraEnabled
+    public static Id saveChunk(Case parentId, String fileName, String base64Data, String contentType, String fileId) {
+        if (fileId == '') {
+            system.debug('File ID when Null'+fileId);
+            fileId = saveTheFile(parentId, fileName, base64Data, contentType);
+            
+        } else {
+            system.debug('File ID when Not Null'+fileId);
+            appendToFile(fileId, base64Data);
+        }
+        
+        return Id.valueOf(fileId);
+    }
+    
+    
+    // end changes
+    public static Id saveTheFile(Case parentId, String fileName, String base64Data, String contentType) {
+        
+        parentId.Examtipline_Check__c=true;
+        insert parentId;
+        system.debug('Case Object'+parentId);
+        base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
+        
+        Attachment oAttachment = new Attachment();
+        oAttachment.parentId = parentId.Id;
+        
+        oAttachment.Body = EncodingUtil.base64Decode(base64Data);
+        oAttachment.Name = fileName;
+        oAttachment.ContentType = contentType;
+        
+        insert oAttachment;
+        system.debug('Attachment Object'+oAttachment);
+        return parentId.Id;
+    }
+    
+    private static void appendToFile(Id fileId, String base64Data) {
+        base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
+        
+        Attachment a = [
+            SELECT Id, Body
+            FROM Attachment
+            WHERE Id =: fileId
+        ];
+        
+        String existingBody = EncodingUtil.base64Encode(a.Body);
+        
+        a.Body = EncodingUtil.base64Decode(existingBody + base64Data);
+        
+        update a;
+    }
+    // New Code for Case Number Generation Starts
+    @AuraEnabled
+    public static String getCaseNumber(Id caseId) {
+        
+        String caseNumber = [Select casenumber from Case where Id =:caseId].casenumber;
+        return caseNumber;
+        
+    }
+    /***************************************************************************************
+* Methods: saveFileWithCase
+* Arguments : None
+* Description : The method returns true If the file is successfully linked to the Case
+* @Author : Piyush Ojha Cisco 
+* Created Date : 11-18-2019
+* **************************************************************************************/
+    @AuraEnabled
+    public static boolean saveFileWithCase(List<Id> docId,Id caseId)
+    {
+        Boolean fileSaved = false;
+        List<Id> lstOfContentDocId = new List<Id>();
+        system.debug('Doc ID'+docId+'Case ID'+caseId);
+        for(ContentVersion objCV : [SELECT title,OwnerId,Owner.name,ContentDocumentId FROM ContentVersion WHERE ContentDocumentId IN : docId ])
+        {
+            lstOfContentDocId.add(objCV.ContentDocumentId);
+        }
+        // Id conDocument = [SELECT title,OwnerId,Owner.name,ContentDocumentId FROM ContentVersion WHERE ContentDocumentId =:docId ].ContentDocumentId;
+        system.debug('lstOfContentDocId'+lstOfContentDocId+'Size : '+lstOfContentDocId.size());
+        List<ContentDocumentLink> fileLinks = new List<ContentDocumentLink>();
+        for(integer i = 0;i<lstOfContentDocId.size();i++)
+        {
+            ContentDocumentLink cDocLink = new ContentDocumentLink();
+            cDocLink.ContentDocumentId = lstOfContentDocId[i];//Add ContentDocumentId
+            cDocLink.LinkedEntityId = caseId;
+            cDocLink.ShareType = 'V';//V - Viewer permission. C - Collaborator permission. I - Inferred permission.
+            cDocLink.Visibility = 'AllUsers';//, InternalUsers, SharedUsers
+            fileLinks.add(cDocLink);
+        }
+        
+        /*  system.debug('conDocument'+conDocument);
+ContentDocumentLink cDocLink = new ContentDocumentLink();
+cDocLink.ContentDocumentId = conDocument;//Add ContentDocumentId
+cDocLink.LinkedEntityId = caseId;
+cDocLink.ShareType = 'I';//V - Viewer permission. C - Collaborator permission. I - Inferred permission.
+cDocLink.Visibility = 'AllUsers';//, InternalUsers, SharedUsers
+fileLinks.add(cDocLink);
+system.debug('fileLinks List'+fileLinks); */
+        if(fileLinks != null && fileLinks.size() > 0)
+        {
+            Database.SaveResult[] srList = Database.insert(fileLinks,false);
+            for (Database.SaveResult sr : srList) 
+            {
+                if (sr.isSuccess()) {
+                    // deleteFilefromUser(docId);
+                    System.debug('Successfully inserted FIle with case. File ID: ' + sr.getId());
+                    fileSaved = true;
+                    return fileSaved;
+                }
+                else {
+                    // Operation failed, so get all errors                
+                    for(Database.Error err : sr.getErrors()) {
+                        System.debug('The following error has occurred.');                    
+                        System.debug(err.getStatusCode() + ': ' + err.getMessage());
+                        System.debug('Account fields that affected this error: ' + err.getFields());
+                    }
+                }
+            }
+        }
+        
+        
+        
+        return fileSaved;
+    }
+    
+/***************************************************************************************
+* Methods: getRecordType
+* Arguments : None
+* Description : The method returns the CaseRecordType where case needs to be assigned.
+* @Author : Piyush Ojha Cisco 
+* Created Date : 12-12-2019
+* **************************************************************************************/
+    @AuraEnabled
+    public static Id getRecordType(){
+        
+        Id caseWorkingRecordId = [Select Id, Name From RecordType Where SobjectType = 'Case' and name = 'CertSec Case Working'].Id;
+        system.debug('caseWorkingRecordId'+caseWorkingRecordId);
+        return caseWorkingRecordId;
+    }
+    
+ /***************************************************************************************
+* Methods: sendMailToCreator
+* Arguments : CaseEmail
+* Description : The method sends the email to the case creator's mail Id.
+* @Author : Piyush Ojha Cisco 
+* Created Date : 12-20-2019
+* **************************************************************************************/   
+ /*   @AuraEnabled
+    public static boolean sendMailToCreator(String caseEmail){
+        system.debug('EMAIL FOR CASE'+caseEmail);
+        try
+        {
+            
+        
+        List<Messaging.SingleEmailMessage> mails =  new List<Messaging.SingleEmailMessage>(); 
+        EmailTemplate et=[SELECT Id FROM EmailTemplate WHERE developername = 'Email_Confirmation_for_Security_Tipline'];
+        system.debug('Email Template'+et);
+         
+            
+            List<String> sendTo = new List<String>();
+            if(caseEmail != null)
+            {
+                sendTo.add(caseEmail);
+            }
+            else
+            {
+                sendTo.add(Userinfo.getUserEmail());
+            }
+             
+            
+            
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            mail.setTemplateId(et.Id);
+            mail.setToAddresses(sendTo);     
+            mail.setBccSender(false);
+            mail.setUseSignature(false);
+            mail.setTargetObjectId(UserInfo.getUserId());
+            mail.setSaveAsActivity(false);  
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+            
+            system.debug('Piyush mail'+mail);
+            return true;
+            
+        
+        
+        }
+        catch(Exception e)
+        {
+            system.debug('Exception At Line :'+e.getLineNumber()+'Exception'+e);
+        }
+        return false;*/
+   }

@@ -1,0 +1,127 @@
+({    
+    runAssignmentRule :function(component,caseObjId) {
+        
+        
+        var action = component.get("c.runAssignmentRuleForCase");
+            console.log('Here It comes');
+        action.setParams({ 
+            "caseID":caseObjId
+        });
+        console.log('Here It comes 2');
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+             console.log('state Here'+state);
+            if (state === "SUCCESS") {
+                
+                var successInsert = response.getReturnValue();
+                console.log('successInsert',successInsert);
+            }
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action); 
+
+    },
+    loadAllCountryCode : function(component){
+        console.log('In COuntry');
+        var action = component.get("c.getAllCountryCode");            
+        action.setCallback(this, function(a){
+            var state= a.getState();    
+            console.log('In COuntry state'+state);            
+            if(state === 'SUCCESS')
+            {
+                var rtnValue = a.getReturnValue();
+                component.set("v.channels",rtnValue);
+                var countryCode = component.get("v.channels").map(function(channel) 
+                                                                  { return { value: channel.Country_Area_Code__c, text: channel.Name+' +'+channel.Country_Area_Code__c } });
+                component.set("v.CountryCodeOption", countryCode);
+             
+                
+                 var countryCodeForUser = component.get("v.channels").map(function(channelUser) 
+                                                                  { return { value: channelUser.Country_Area_Code__c, text: channelUser.Name } });
+                var countryCodeParsed = JSON.parse(JSON.stringify(countryCodeForUser));
+                var countryMap = new Map();
+                for(var i = 0 ;i < countryCodeParsed.length ; i++)
+                { 
+                    countryMap.set(countryCodeParsed[i].text,countryCodeParsed[i].value);
+                }
+               
+                var userCountry = component.get("v.userCountry");
+                var myCountryCode = countryMap.get(userCountry);
+                console.log('My Country Code'+myCountryCode);
+                if(myCountryCode != null)
+                {
+                   component.set("v.selectedBusinessArea","+"+myCountryCode);
+                component.set("v.selectedMobileArea","+"+myCountryCode); 
+                }
+                
+                
+            }   
+            
+            
+            
+        });
+        $A.enqueueAction(action);
+        
+        
+        
+        
+    },
+    
+    getLoggedInUserCountry : function(component,userId){
+        console.log('In COuntry');
+        var action = component.get("c.getUserCountry");    
+        action.setParams({
+            "userId" :userId  });        
+        action.setCallback(this, function(a){
+            var state= a.getState();    
+            console.log('In User COuntry state'+state);            
+            if(state === 'SUCCESS')
+            {
+                var rtnValue = a.getReturnValue();
+                console.log('My Country is '+rtnValue);
+                component.set("v.userCountry",rtnValue);
+                
+                
+            }   
+            
+            
+            
+        });
+        $A.enqueueAction(action);
+        
+        
+        
+        
+    },
+     deleteFileOnCase : function(component,fileToDelete) 
+    {
+        var actionNow = component.get("c.deleteCaseFiles");
+        actionNow.setParams({
+            "deleteFileId" :fileToDelete 
+        });
+        actionNow.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('Piyush testing in Delete'+state);
+            if (state === "SUCCESS") {
+                console.log('PIYUSH TEST  ');
+                var allComments = response.getReturnValue();               
+                console.log('DELETED FILES :',allComments);
+            }
+        });
+        $A.enqueueAction(actionNow);
+    }
+})

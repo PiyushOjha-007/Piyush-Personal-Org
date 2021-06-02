@@ -1,0 +1,17 @@
+<apex:page standardController="Contact">
+  <!-- Begin Default Content REMOVE THIS -->
+  <apex:form >
+  
+  <apex:pageBlock title="First Contact Page">
+  <h1>Congratulations</h1>
+  <h2>Welcome to the Accenture.</h2><br/>
+  This is your new Page<br/>
+First Name:<apex:inputField value="{!Contact.FirstName}"/><br/>
+Last Name:<apex:inputField value="{!Contact.LastNAme}"/><br/>
+Phone:<apex:inputField value="{!Contact.Phone}"/><br/>
+Email:<apex:inputField value="{!Contact.Email}"/><br/>
+<apex:commandButton action="{!save}" value="Save"/>
+  <!-- End Default Content REMOVE THIS -->
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

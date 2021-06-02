@@ -1,0 +1,32 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+    
+     <div class="slds-text-title slds-m-around_x-small">
+        <lightning:carousel >
+            <lightning:carouselImage
+                                     src="{!$Resource.Carousel1}"
+                                     header = "Training and Certification Updates"
+                                     description = "If you are thinking about or actively pursuing a certification, please read about latest program changes"
+                                     alternativeText = "First Image Description."
+                                     href = "https://www.cisco.com/c/en/us/training-events/training-certifications/take-learning-to-next-level.html?cid=cdc-ref-cert-learning-nextlevel-text-4760">
+            </lightning:carouselImage>
+            <lightning:carouselImage
+                                      src="{!$Resource.Carousel2}"
+                                     header = "Unleash the Capabilities of the New Network with DevNet Certification"
+                                     description = "Evolution of Cisco’s professional certification program embraces network professionals and software developers into one community."
+                                     alternativeText = "Second Image Description"
+                                     href = "https://developer.cisco.com/certification?cid=devnet-ref-cert-certification-text-4761">
+            </lightning:carouselImage>
+            <lightning:carouselImage
+                                      src="{!$Resource.Carousel3}"
+                                     header = "CCNA Study Group"
+                                     description = "A supportive place on the Cisco Learning Network where you can ask questions and share ideas with other members as you prepare for your CCNA Certification."
+                                     alternativeText = "Third Image Description."
+                                     href = "https://www.google.com">
+            </lightning:carouselImage>
+        </lightning:carousel>
+    </div>
+
+
+    
+</aura:component>

@@ -1,0 +1,523 @@
+({
+    doInit:function(component, event, helper){
+        component.set("v.isLoaded",true);
+        component.set("v.HideSpinner",true);
+        console.log('Spinner:'+component.get("v.HideSpinner"));
+        var UserEmail =  $A.get("$SObjectType.CurrentUser.Email");
+        var userId = $A.get("$SObjectType.CurrentUser.Id");
+        component.set("v.recordId",userId);
+        component.set("v.email",UserEmail);
+        var sURL = window.location.href;
+        //  console.log('CS ID',component.get("v.csId"));
+        //  console.log('CASE ID',component.get("v.caseID"));
+        console.log('Edit Case Comp URL'+sURL);
+        var caseObjId ;
+        var caseObjId1;
+        var num1;
+        var casenum;
+        
+        if(sURL.includes('caseId'))
+        {
+            caseObjId = sURL.split('%')[0];
+            caseObjId1 = caseObjId.split('caseId=')[1];
+            console.log('caseObjId1',caseObjId1);
+            casenum = sURL.split('#')[1];
+        }
+        console.log('casenum Piyush',casenum);
+        component.set("v.casenum",casenum);
+        console.log('Case caseObjId1 :Piyush '+caseObjId1);
+        component.set("v.caseID",caseObjId1);
+        
+        var caseDetails = component.get("v.case");
+        var caseDetails1 = JSON.stringify(caseDetails);
+        console.log('PIYUSH CASE COUNTRY 1 2:'+caseDetails1);
+        
+        // Case Comments code by PO Starts
+        helper.loadAllCountryCode(component);
+        helper.getAllCommentsOnCase(component);
+        
+        // Case Comments code by PO Ends
+        helper.getCheckBoxValue(component,helper);
+        helper.getPhonenumberValue(component,helper);
+        helper.getAttachments(component, helper);
+        helper.getFiles(component, helper);
+        //Get Case Status to hide the case closure label //
+        helper.getCaseStatusValue(component, helper);
+        helper.getCaseAge(component,helper);
+        
+       /* var caseDetails = component.get("v.case");
+        var caseDetails1 = JSON.stringify(caseDetails);
+        console.log('PIYUSH CASE COUNTRY 1:'+caseDetails1); */
+        
+        const values = [
+            {'label': $A.get("$Label.c.Open_Case_Business_Phone"), 'value': 'business' },                                           
+            {'label': $A.get("$Label.c.Open_Case_Mobile_Phone"), 'value': "mobile" },
+            {'label': $A.get("$Label.c.Open_Case_Email_Default"), 'value': "email",'disabled':"true" },];
+            component.set('v.options', values);
+            component.set("v.HideSpinner",false);
+            },
+handleUploadFinished : function(component, event, helper) {
+            var isDuplicateFile = false;
+            var fileCount = component.get("v.fileCount");
+            var fn = component.get("v.fn");
+            console.log('fileCount'+fileCount);
+            var uploadedFilesName = [];
+        uploadedFilesName = event.getParam("files");
+        // Duplicate File Name Scenario Starts by PO //
+        var duplicateFile = component.get("v.duplicateFiles");
+        console.log('duplicateFile',duplicateFile);
+        
+        for(var i = 0 ; i < duplicateFile.length ; i++)
+        {
+            
+            if(duplicateFile[i] == uploadedFilesName[0].name)
+            {
+                console.log('Duplicate File There');
+                isDuplicateFile = true;
+                component.set("v.duplicateFilename",uploadedFilesName[0].name);
+            }
+        }
+        // Duplicate File Name Scenario Ends by PO //
+        
+        if(fileCount == 10 || fileCount > 9)
+        {    
+            var elements = document.getElementsByClassName("showFileCountError");
+            elements[0].style.display = 'block';
+        }
+        else if(isDuplicateFile == true)
+        {
+            
+            console.log('Duplicate File Found');
+            var elements = document.getElementsByClassName("showDuplicateError");
+            elements[0].style.display = 'block';
+        }
+            else
+            {    
+                var elements = document.getElementsByClassName("showDuplicateError");
+                elements[0].style.display = 'none';
+                var prevDocId = component.get("v.documentIds");
+                console.log('Previous Doc Id'+prevDocId);
+                var NewfileNames = component.get('v.fileNames'); 
+                console.log('NewfileNames '+NewfileNames);
+                var uploadedFiles = [];
+                uploadedFiles = event.getParam("files");
+                var documentIds = [];
+                var fileNames = [];
+                for(var i = 0 ; i<uploadedFiles.length ; i++)
+                {
+                    component.set("v.duplicateFiles["+fileCount+"]",uploadedFiles[0].name);
+                    documentIds.push(uploadedFiles[i].documentId);
+                    fileNames.push(uploadedFiles[i].name);
+                }
+                console.log('documentIds after upload',documentIds);
+                console.log('fileNames after upload',fileNames);
+                component.set("v.fn["+fileCount+"]",uploadedFiles[0].name);                
+                component.set("v.fileNames",fn);
+                
+                
+                 component.set("v.documentIds["+fileCount+"]",uploadedFiles[0].documentId);               
+              //  component.set("v.documentIds",documentIds+'-'+prevDocId);
+                component.set("v.fileCount",fileCount+1);
+                console.log('Ended with '+component.get("v.documentIds"));
+                
+                
+                
+                
+            }
+    },
+    doSave: function(component, event, helper) {
+        var caseclosed = component.get("v.caseCantUpdate");
+        if(caseclosed == false){
+        // Piyush Ojha Try Starts
+        console.log('Hi in save');
+        component.set("v.flagForForm",false);
+       var businesscountrycode = component.get("v.selectedBusinessArea"); //component.find('businesscountrycode').get("v.value");
+        var mobilecountrycode = component.get("v.selectedMobileArea"); //component.find('mobilecountrycode').get("v.value");
+       var mobileRequired =   component.get("v.mobileCheckbox");
+        var businessRequired = component.get("v.businessCheckbox");
+        console.log('businessRequired :'+businessRequired+'mobileRequired : '+mobileRequired);
+        console.log('businesscountrycode :'+businesscountrycode+'mobilecountrycode : '+mobilecountrycode);
+       if((mobileRequired && businessRequired && mobilecountrycode == 'Country Code' && businesscountrycode == 'Country Code' ) || (mobileRequired == true && mobilecountrycode == 'Country Code' ) || (businessRequired == true && businesscountrycode == 'Country Code'))
+       {
+           console.log('HI Inside Prevent Event');
+          event.preventDefault();
+           component.set("v.flagForForm",true);
+       } 
+        if(businessRequired && businesscountrycode == 'Country Code'  || businessRequired == true && businesscountrycode == 'Country Code' )
+        {
+            component.set("v.showerror",true);
+        }
+        if(mobileRequired && mobilecountrycode == 'Country Code' ||  mobileRequired == true && mobilecountrycode == 'Country Code'  ){
+            component.set("v.displayerror",true);
+        } 
+          if(businessRequired == true && businesscountrycode != 'Country Code' && mobileRequired == true && mobilecountrycode != 'Country Code'){
+               event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email  Business  Mobile";
+            component.find('myform').submit(eventFields);
+        }
+        if (mobileRequired == true && mobilecountrycode != 'Country Code' && businessRequired != true ){
+          //  alert('into this loop');
+              event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email Mobile";
+            component.find('myform').submit(eventFields);
+        }
+        if(businessRequired == true && businesscountrycode != 'Country Code' && mobileRequired != true){
+                  event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email Business";
+            component.find('myform').submit(eventFields);    
+        }
+        if (businessRequired == false && mobileRequired == false){
+               event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email";
+            component.find('myform').submit(eventFields);   
+        }
+        // Piyush Ojha Try Ends
+        console.log('HERE FLAG IS :'+component.get("v.flagForForm"));
+        if(component.get("v.flagForForm") == false)
+        {
+      //  var caseClosure =  cmp.find("closure").get("v.value");
+        var caseClosure =   component.get("v.closurecheckbox");
+
+
+     //    component.find("caseClosure").get("v.checked");
+        var caseID = component.get("v.caseID");
+            console.log('case id'+caseID);
+        
+        var caseComments = component.find("desc1").get("v.value");
+            console.log('case comments'+caseComments)
+            
+        var business = component.find("business").get("v.value");//
+           console.log('business value'+business);
+            
+       var mobile = component.find("mobile").get("v.value");
+          console.log('mobile value'+mobile);
+            
+        var files = component.get("v.documentIds");
+            console.log('document place' +files);
+            
+        
+        console.log('PIYUSH CLOSURE',caseClosure,'caseID',caseID,'Comments',caseComments,'business',mobileRequired,'mobile',businessRequired,'Files',files);
+        helper.updateCaseStatus(component,caseID,caseClosure,caseComments,businessRequired,mobileRequired,files);
+        
+        
+        var caseComments = component.find("desc1").get("v.value");
+        console.log('Case Comments',caseComments);
+            if(caseComments != '' && caseComments !=  null)
+            {
+                helper.saveTheComments(component,caseComments);
+            }
+        
+        }
+        
+        }
+        else {
+           var toastEvent = $A.get("e.force:showToast");
+          toastEvent.setParams({
+                      "title": "Information",
+                     "message": "Cases in Solved status can only be modified within 5 days from date of closure."
+    });
+    toastEvent.fire();
+      
+        var urlEvent = $A.get("e.force:navigateToURL");
+        urlEvent.setParams({
+            "url": "/mycases/"
+        });
+        urlEvent.fire();
+           
+          }        
+        
+        
+    },
+    
+    handleFilesChange: function(component, event, helper) {
+        var fileName = 'No File Selected..';
+        if (event.getSource().get("v.files").length > 0) {
+            fileName = event.getSource().get("v.files")[0]['name'];
+        }
+        component.set("v.fileName", fileName);
+        
+    },
+    
+    handleSuccess : function(component, event, helper) {
+        /************************** Lightning File Upload Code Starts by PO*************************/
+        
+        
+        var payload = event.getParams().response;
+        var caseObj = JSON.parse(JSON.stringify(payload));
+        var caseNumber = caseObj.fields.CaseNumber.value; 
+        var docuId = component.get("v.documentIds");
+        console.log('Case Id'+payload.id+' Case Number : '+caseNumber+'DOcument ID'+docuId);
+        
+        // Edit Case Fixes by Piyush Ojha
+        
+       var action = component.get("c.saveFileWithCase");
+           
+            console.log('Here It comes payload ID'+payload.id+'We have Docs '+docuId);
+            action.setParams({ 
+                "docId" : docuId,
+                "caseId" : payload.id
+            });
+            console.log('Here It comes 2');
+            action.setCallback(this, function(response) {
+                var state = response.getState();
+                console.log('state Here'+state);
+                if (state === "SUCCESS") {
+                    
+                    var successInsert = response.getReturnValue();
+                    console.log('successInsert Here'+successInsert);
+                   
+                }
+                else if (state === "INCOMPLETE") {
+                    // do something
+                }
+                    else if (state === "ERROR") {
+                        var errors = response.getError();
+                        if (errors) {
+                            if (errors[0] && errors[0].message) {
+                                console.log("Error message: " + 
+                                            errors[0].message);
+                            }
+                        } else {
+                            console.log("Unknown error");
+                        }
+                    }
+            });
+            $A.enqueueAction(action); 
+            
+        
+        // Edit Case Fixes by Piyush Ojha
+       
+        var caseMessage = $A.get("$Label.c.Case_Updated_Message");
+        console.log('Case Message',caseMessage);
+        var updatedCaseMessage = caseMessage.replace('xxx',caseNumber);
+        console.log(' updatedCaseMessage Case Message',updatedCaseMessage);
+        var toastEvent = $A.get("e.force:showToast");
+        toastEvent.setParams({
+            title : 'Success',
+            message: updatedCaseMessage,
+            duration:' 5000',
+            key: 'info_alt',
+            type: 'success',
+            mode: 'dismissible'
+        });
+        toastEvent.fire();  
+        var urlEvent = $A.get("e.force:navigateToURL");
+        urlEvent.setParams({
+            "url": "/mycases/"
+        });
+        urlEvent.fire();
+        
+        /*************************** Lightning File Upload Ends ************************************/
+    },
+    phoneChange:function(component, event, helper){
+        var business = component.find("business").get("v.value");
+        var mobile = component.find("mobile").get("v.value");
+        console.log('business',business,'mobile',mobile);     
+        component.find("businesshidden").set("v.value",business);
+        component.find("mobilehidden").set("v.value",mobile);
+    },
+    
+    itemsChange : function(component, event, helper){
+        //   alert('hi');
+        var subject = component.find("subject1").get("v.value");
+        var desc = component.find("desc1").get("v.value");
+        
+        
+        // alert(subject);
+        
+        
+        component.find("desc").set("v.value",desc);
+        
+        component.find("subject").set("v.value",subject);
+        
+    },
+    handleChange : function(component, event, helper){
+        var business = component.find("business");
+        var mobile = component.find("mobile");
+        var phoneValues = [];
+        phoneValues = event.getParam("value");
+        console.log('phoneValues length : '+phoneValues.length);
+        console.log('phoneValues : '+phoneValues);
+        for(var i = 0;i<=phoneValues.length;i++)
+        {
+            if(phoneValues.length == 3)
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('All Selected');
+                component.set("v.mobileChecked",true);
+                component.set("v.businessChecked",true);
+                break;
+            }
+            if(phoneValues.includes('business') && phoneValues.includes('mobile'))
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('Both Business Mobile here',phoneValues[i]);
+                component.set("v.businessChecked",true);
+                //   $A.util.removeClass(mobile, "slds-has-error");
+                component.set("v.mobileChecked",true);
+                break;
+            }
+            if(phoneValues[i]=='business')
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('Business here',phoneValues[i]);
+                component.set("v.businessChecked",true);
+                $A.util.removeClass(mobile, "slds-has-error");
+                component.set("v.mobileChecked",false);
+                break;
+            }
+            if(phoneValues[i]=='mobile')
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('MObile here',phoneValues[i]);
+                $A.util.removeClass(business, "slds-has-error");
+                component.set("v.mobileChecked",true);
+                component.set("v.businessChecked",false);
+                break;
+            }
+            if(phoneValues.length == 1)
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('None Selected');
+                $A.util.removeClass(business, "slds-has-error");
+                $A.util.removeClass(mobile, "slds-has-error");
+                component.set("v.mobileChecked",false);
+                component.set("v.businessChecked",false);
+                break;
+            }
+            
+            
+            
+        }
+    },
+    waiting: function(component, event, helper) {
+        component.set("v.HideSpinner", true);
+    },
+    doneWaiting: function(component, event, helper) {
+        component.set("v.HideSpinner", false);
+    },
+    handleSectionToggle: function(component, event, helper)
+    {
+        var openSections = event.getParam('openSections');
+        
+        if (openSections.length === 0) {
+            component.set('v.activeSectionsMessage', "All sections are closed");
+        } else {
+            component.set('v.activeSectionsMessage', "Open sections: " + openSections.join(', '));
+        }
+    },
+    handleDeleteFile : function(component, event,helper) {
+        
+        //  Delete File Code Starts here By PO
+        
+        console.log('Inside delete File'+component.get("v.fileCount"));
+        var deleteDoc = event.getSource().get("v.name");
+        console.log('deleteDoc',deleteDoc);
+        var dfile = component.get("v.duplicateFiles");
+        dfile.splice(deleteDoc,1);
+        component.set("v.duplicateFiles",dfile);
+        console.log('Duplicate File in Delete'+dfile);
+        
+        console.log('Duplicate File names after Delte',component.get("v.duplicateFiles"));
+        var fname = component.get("v.fileNames");
+        console.log('File names',fname);
+        fname.splice(deleteDoc, 1);
+        component.set("v.fileNames",fname);
+        console.log('File names after Delte',component.get("v.fileNames"));
+        
+        var fn = component.get("v.fn");
+        console.log('fn in delete',fn);
+        fn.splice(deleteDoc, 1);
+        component.set("v.fn",fn);
+        
+        // Delete DOcument ID from List
+        var updatedDocId;
+        var docuIds = component.get("v.documentIds");
+        console.log('Before Docs Id '+docuIds);
+       // var allDocId = [];   
+       // var newIds = docuIds.split('-');
+        
+      //  newIds = newIds.filter(function( element ) {
+  		//		 return element !== "undefined";
+		//			});
+        
+       // console.log('After Filter newIds',newIds);
+        
+        
+     /*   for(var i = 0;i<newIds.length;i++)
+        {
+            allDocId.push(newIds[i]);
+        }
+        console.log('All DOc Id before delet'+allDocId) */
+        
+        var fileToDelete = docuIds[deleteDoc];
+        docuIds.splice(deleteDoc, 1);
+        console.log('Delete Index '+deleteDoc+'Final docuIds'+docuIds);
+        
+     /*   if(allDocId != null && allDocId.length > 0 )
+        {
+            for(var i = 0;i<allDocId.length;i++)
+            {
+                updatedDocId = allDocId[i]+"-"+updatedDocId;
+                
+            } 
+        } 
+        */
+        
+        var fileCount = component.get("v.fileCount");
+      //  console.log("updatedDocId",updatedDocId);
+        component.set("v.documentIds", docuIds);
+        component.set("v.fileCount",fileCount-1);
+        console.log('The File COunt After Delete'+component.get("v.fileCount"));
+        console.log('The Record to Delete is',fileToDelete);
+       // helper.deleteFileOnCase(component,fileToDelete);
+        //  Delete File Code Ends By PO
+        
+        //  Delete File Code Ends here By PO
+    },
+    
+    handleAreaChange : function(component, event,helper) {
+        
+        var businessCode = component.find("businesscountrycode").get("v.value");
+        console.log('business Code 0 ',businessCode);
+        component.find("businessareacodehidden").set("v.value",businessCode);
+        var bcode ="+"+businessCode;
+        console.log('business Code 1 ',bcode);
+        component.set("v.showerror", false);
+        component.set("v.selectedBusinessArea",bcode);        
+        component.find("businesscountrycode").set("v.value",component.get("v.selectedBusinessArea"));       
+        console.log('business Code 2 ',component.get("v.selectedBusinessArea"));
+        
+    },
+    
+    handleAreaChangeMobile : function(component, event,helper) {
+        
+        var mobileCode = component.find("mobilecountrycode").get("v.value");
+        component.find("mobileareacodehidden").set("v.value",mobileCode);
+        var mcode ="+"+mobileCode;    
+        component.set("v.selectedMobileArea",mcode);
+        component.set("v.displayerror",false);
+
+
+        component.find("mobilecountrycode").set("v.value",component.get("v.selectedMobileArea"));
+        console.log('mobileCode Code',mobileCode);     
+        
+    },
+    openSingleFile: function(cmp, event, helper) {
+     var caseId = event.target.id;
+		$A.get('e.lightning:openFiles').fire({
+		    recordIds: [caseId]
+		});
+	},
+   
+    
+})

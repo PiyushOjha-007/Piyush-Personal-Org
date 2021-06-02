@@ -1,0 +1,137 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="MyRetailer_Controller" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isHandleNewUser" type="boolean" default="false" />
+    <aura:attribute name="isHandleRegisteredUser" type="boolean" default="false" />
+    <aura:attribute name="contactDetail" type="MyRetailer_Controller.ContactWrapperClass" />
+    <aura:attribute name="pizzaPrice" type="Integer" default="0" />
+    <aura:attribute name="contactOrderDetail" type="MyRetailer_Controller.ContactWrapperClass" />
+    
+    
+    <div style="background-color:black !important;height:70px">
+        
+        <div class="headerclass"><br/>
+            <div align="center" class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:button variant="inverse" label="New User" title="Destructive action" onclick="{! c.handleNewUser }"/>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:button variant="inverse" label="Existing User" title="Destructive action" onclick="{! c.handleRegisteredUser }"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <aura:if isTrue="{!v.isHandleRegisteredUser}">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container" style="width:40%">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon class="slds-modal__close" iconName="utility:close" alternativeText="Close" size="x-small" variant="border-filled" onclick="{!c.closeModal}" />
+                    <span class="slds-text-title_caps">Please Enter the Phone Number</span>
+                </header>
+                <div class="slds-modal__content slds-p-around_small" id="modal-content-id-1" >
+                    <lightning:input onchange="{!c.onMobileEnetering}" label="Mobile No" aura:id="mobile" maxlength="10" type="tel"  name="mobile" />
+                </div>
+                
+                <footer class="slds-modal__footer" align="center" style="text-align:center" >
+                    <div class="slds-text-title_caps ContactDetail" style="color:red;font-size:9px;background:white;">
+                        <aura:iteration items="{!v.contactDetail}" var="con">
+                            <span><b>{!con.Name} your Subscription of {!con.Subscription_Term__c} months will expire on :<ui:outputDate aura:id="oDate" value="{!con.Subscription_End_Date__c}" /> </b></span><br/><br/>
+                            <span style="color:maroon"><b>Total Orders Till Date by {!con.Name} : <ui:outputText  value="{!con.Total_Orders_and_Transactions__c}" /> </b></span><br/>
+                            <span style="color:maroon"><b>Total Amount Spent Till Date : <ui:outputText  value="{!con.Total_Amount_Spent__c}" /> $ </b></span><br/>
+                        </aura:iteration>
+                    </div><br/>
+                    
+                    <aura:if isTrue = "{!v.contactOrderDetail.length > 0}">
+                        <label style="color:grey;font-size:12px;"> Recent Orders and Transaction done by Customer </label><br/><br/>
+                        <div class="slds-text-title_caps ContactDetail" style="color:black;font-size:8px;background:white;">
+                            
+                            
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead style="font-size:9px">
+                                    <tr class="slds-line-height_reset">
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Number">Order Number</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Date">Order Date</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Details">Selected Pizzas</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Amount">Order Amount</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Placed By">Order Placed By</div>
+                                        </th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.contactOrderDetail}" var="order"> 
+                                        <tr class="slds-hint-parent">
+                                           
+                                            <td data-label="Order Number">
+                                                <div class="slds-truncate" title="Order Number">{!order.Name}</div>
+                                            </td>
+                                            <td data-label="Order Date">
+                                                <div class="slds-truncate" title="Order Date">{!order.CreatedDate}</div>
+                                            </td>
+                                            <td data-label="Order Details">
+                                                <div class="slds-truncate" title="Order Details">{!order.Selected_Pizzas__c}</div>
+                                            </td>
+                                                     <td data-label="Order Amount">
+                                                <div class="slds-truncate" title="Order Amount">{!order.Order_Amount__c}</div>
+                                            </td>
+                                            <td data-label="Order Placed By">
+                                                <div class="slds-truncate" title="Order Placed By">{!order.Contact__r.Name}</div>
+                                            </td>
+                                            
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                            
+                            
+                        </div>
+                    </aura:if><br/>
+                    <lightning:button label="Submit"
+                                      class="buttonClass"
+                                      onclick="{!c.proceedOrder}"/>
+                    
+                </footer>
+                
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop--open " id="backGroundSectionId"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isHandleNewUser}">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_x-small" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container" style="width:40%">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon class="slds-modal__close" iconName="utility:close" alternativeText="Close" size="x-small" variant="border-filled" onclick="{!c.closeModal}" />
+                    <h5 id="modal-heading-01" class="slds-text-title_caps">Customer Info</h5>
+                </header>
+                <div class="slds-modal__content slds-p-around_small" id="modal-content-id-1" >
+                    <lightning:recordEditForm  objectApiName="Contact" onsuccess="{!c.handleSuccess}" recordTypeId="0127F000001JXG9QAO">
+                        <lightning:messages />
+                        <lightning:inputField fieldName="FirstName" />
+                        <lightning:inputField fieldName="LastName" />
+                        <lightning:inputField fieldName="Phone" /> 
+                        <lightning:button label="Save Detail" type="submit"
+                                          class="buttonClass" />
+                        
+                        
+                    </lightning:recordEditForm>
+                    
+                </div>
+                
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop--open " id="backGroundSectionId"></div>
+    </aura:if>
+    
+</aura:component>

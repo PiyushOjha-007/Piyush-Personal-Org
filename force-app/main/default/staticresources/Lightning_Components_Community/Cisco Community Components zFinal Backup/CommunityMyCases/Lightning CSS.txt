@@ -1,0 +1,87 @@
+.THIS .slds-checkbox {
+    display: inline !important;
+}
+    .THIS .selected{
+    color:orange;
+}
+.THIS .slds-checkbox_faux
+{
+    border-radius: 2px;
+    color: white;
+    background: white;
+    border-color: grey;
+}
+.THIS .slds-input
+{
+    width:22%;
+    border-radius : 5px;
+    border-color: lightgray;
+    margin-right:25px;
+}
+.THIS .mycasediv
+{
+    color:red;
+}
+.THIS .greenSpan
+{
+    color:green;
+}
+.THIS .orangeSpan
+{
+    color:Orange;
+}
+
+.THIS .BorderColor
+{
+    border-bottom:1.5px solid black;
+}
+.THIS .slds-card 
+{
+    border:0px solid grey;
+   
+}
+.THIS .greySpan
+{
+    background:snow;
+    color:black;
+}
+.THIS .whiteSpan
+{
+    background:white;
+    color:black;
+}
+.THIS{
+   font-family: 'ciscoSans';
+   font-size: 14px; 
+}
+@font-face {
+    font-family: 'CiscoSans';
+    font-style:normal;
+    font-weight:400;
+    src: url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTRegular.woff2') format('woff2'), url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTRegular.woff') format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+.THIS .headerclass{
+    font-family:'CiscoSansTTExtraLight';
+    font-size: 40px;
+}
+@font-face {
+    font-family: 'CiscoSansTTExtraLight';
+    font-style:normal;
+    font-weight: 100;
+    font-color:#58585B;
+    src: url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTExtraLight.woff2') format('woff2'), url('https://cscsandbox-learningatcisco.cs43.force.com/s/sfsites/c/resource/Fonts/fonts/CiscoSans/CiscoSansTTExtraLight.woff') format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+.THIS .slds-col--padded{
+    padding:inherit !important;
+}
+.THIS .slds-form-element__label{
+    font-size:14px !important;
+    font-family: CiscoSans;
+    margin-bottom:-10px !important;
+}
+.THIS label[for=checkbox-1-4]{
+    font-size:14px !important;
+}

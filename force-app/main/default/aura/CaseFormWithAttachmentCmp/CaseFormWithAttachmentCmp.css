@@ -1,0 +1,57 @@
+.THIS .clsFieldset {    
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-top: 0.35em;
+    padding-bottom: 0.625em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    border: 1px groove none none none;
+    display: block;    
+ }
+.THIS .slds-form-element__label
+{
+    margin-right:65px;
+}
+ .THIS .clsLegend {    
+    padding-left: 2px;
+    padding-right: 2px;
+    border: none;
+    display: block;
+ }
+.THIS .slds-form-element__label
+{
+    font-size:15px;
+}
+.THIS .labelfont
+{
+    font-size:15px;
+    
+}
+.THIS .contactpre{
+    font-size:15px;
+}
+.THIS .desc{
+    font-size:15px;
+}
+.THIS .title{
+    font-size:15px;
+}
+.THIS .manualproduct{
+    font-size:15px;
+}
+.THIS .subject{
+    padding: 0px,0px;
+}
+.THIS .slds-checkbox {
+    display: inline !important;
+     border-radius: 2px;
+    color: white;
+    border-color: grey;
+}
+.THIS .slds-checkbox_faux
+{
+    border-radius: 2px;
+    color: white;
+    background: white;
+    border-color: grey;
+}

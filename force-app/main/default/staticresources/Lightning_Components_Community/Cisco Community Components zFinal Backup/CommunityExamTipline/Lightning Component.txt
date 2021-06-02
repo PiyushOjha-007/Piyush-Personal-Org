@@ -1,0 +1,148 @@
+<aura:component  implements="lightning:isUrlAddressable,force:appHostable,lightning:hasPageReference,flexipage:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="LTG_ExamTiplineClass" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.loadInit}" /> 
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <!-- 'fileName' attribute for display the selected file name -->  
+    <aura:attribute name="email" type="String"/> 
+    <aura:attribute name="caseEmail" type="String"/> 
+    <aura:attribute name="subject" type="string"  />
+    <aura:attribute name="desc" type="string"  />
+    <aura:attribute name="csco" type="string"  />
+    <aura:attribute name="dealershiptTeamRecord" type="Boolean" default="true" /> 
+    <aura:attribute name="ExamtiplineCheckbox" type="Boolean" default="true" />
+    <aura:attribute name="FilerecordId" type="String" />
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <aura:attribute name="caseObj" type="Case" />
+    <aura:attribute name="documentIds" type="String" />
+    
+    <aura:attribute name="fileNames" type="String[]" />
+    <aura:attribute name="fn" type="List" />
+    <aura:attribute name="NewfileNames" type="String" />
+    <aura:attribute name="mobileChecked" type="boolean" default="false" />
+    <aura:attribute name="businessChecked" type="boolean" default="false" />
+    <aura:attribute name="value" type="List" default="['email']"/>
+    <aura:attribute name="businessphone" type="string"  />
+    <aura:attribute name="mobilephone" type="string"  />
+    <aura:attribute name="caseWorkingRecordType" type="Id"  />
+    <!-- 'fileName' attribute for display the selected file name -->  
+    <aura:attribute name="fileName" type="String" default="" />
+    <aura:attribute name="disablebutton" type="Boolean" default="false" />
+
+    
+    <!-- Duplicate FileName Attributes Starts by PO -->
+    <aura:attribute name="duplicateFilename" type="String" default="" />
+    <aura:attribute name="duplicateFiles" type="String[]" />
+    <!-- Duplicate FileName Attributes Ends by PO -->
+    
+    <aura:attribute name="caseID" type="String" />
+    <aura:attribute name="fileCount" type="Integer" default="0"/>
+    
+    <!-- Lightning Input with file type and on file change call the 'handleFilesChange' controller --> 
+    
+    <!--  <aura:attribute name="newCase" type="Case"
+                    default="{ 'sobjectType': 'Case',
+                             'Status': '',
+                             'Origin': '',	
+                             'Subject': '',
+                             'Description': '',
+                             }"/>-->
+    <aura:attribute name="multiple" type="Boolean" default="false"/>
+    <aura:attribute name="newCase" type="Case"  default="{'sobjectType': 'Case'}"/>
+    <aura:attribute name="newCaseObj" type="Case"  default="{'sobjectType': 'Case'}"/>
+    
+    <div style="background-color:#f5f5f6 !important; padding:inherit !important;">
+        <div class="headerclass">  
+            <label style="font-size:40px;padding-left: 25px;">{!$Label.c.Exam_Tipline_Case_Submitted}</label>    
+            <div class="slds-align-right" align="right" style="padding-right:25px;font-size:14px;" > <span style="color:red;">*&nbsp;</span>{!$Label.c.CommunityExamtipline_Required}</div> 
+        </div>
+        
+        <div class="" style="padding-left: 25px; padding-right:25px;padding-bottom:25px;">
+            
+            <div style="background-color: #ffffff !important;font-size: 14px;">
+                <div class="slds-align_absolute-right" style="padding-top:15px;padding-right:10px;" align="right">    <a style="color:rgb(0, 188, 235);font-size: 14px; font-family:ciscosans" href="{!(join('/s',$Label.c.CommunityBaseUrl,'/examsecuritytiplinelink'))}">{!$Label.c.Exam_Security_Important_Links}</a></div>
+                <!--  <div class="slds-text-heading_medium" style="padding-left: 32px;padding-top: 20px;" >
+                    {!$Label.c.Community_Exam_Tipline} 
+                </div><br /> -->
+                <div style="background-color: #ffffff !important;font-size: 14px;padding-left: 32px;
+                            padding-top: 0px;padding-right: 32px;">    
+                    <div style="font-size: 14px; padding-left:15%; padding-right:15%; padding-top:5%; padding-bottom:5%; "  >
+                        <lightning:recordEditForm objectApiName="Case" recordTypeId="{!v.caseWorkingRecordType}" onsubmit="{!c.doSave}"  onsuccess="{!c.handleSuccess}"  onerror="{!c.handleError}">
+                            <lightning:messages />
+                            <!-- <span style="color:red;">*</span><span class="email">{!$Label.c.CommunityExamTipline_EmailAddress}</span> -->
+                            <lightning:input label="{!$Label.c.CommunityExamTipline_EmailAddress}"  name="emailaddress" value="{!v.email}" placeholder="{!$Label.c.EmailAddress_Placeholder}" required="true" aura:id="email1" messageWhenPatternMismatch="Invalid Email Address !" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" messageWhenValueMissing="{!$Label.c.Community_CreateAccount_Error_Email}" onkeyup="{!c.itemsChange}" />
+                            <lightning:inputField fieldName="Email__c" required="true" aura:id="email" variant="label-hidden"  style="display:none;"/><br></br>
+                            <lightning:input label="{!$Label.c.Title}" name="Case Subject" required="true"  aura:id="subject1" class="subject" messageWhenBadInput="Please insert not more than 50 character" maxlength="50"  placeholder="{!$Label.c.Open_Case_title_placeholder}" messageWhenValueMissing="{!$Label.c.Community_title_error}" messageWhenTooLong="{!$Label.c.Community_Title_Length_Error}" onchange="{!c.itemsChange}"/>   
+                            <lightning:inputField fieldName="Subject" required="true" aura:id="subject" variant="label-hidden" style="display:none;"/>
+                            <br></br>   <lightning:textarea label="{!$Label.c.Description}" required="true"  name="Case Desc" maxlength="20000" value="{!v.desc}" aura:id="desc1"  placeholder="{!$Label.c.Open_Case_description_placeholder}" messageWhenValueMissing="{!$Label.c.Community_Description_Error}" messageWhenTooLong="More than 20000 characters entered; Please reduce the length of the description" onkeyup="{!c.itemsChange}" />
+                            <lightning:inputField fieldName="Description" required="true" aura:id="desc" variant="label-hidden" style="display:none;"/>
+                            <br></br>
+                            
+                            <lightning:inputField fieldName="Cert_CSCO_No__c" style="display:none;"  aura:id="product" variant="label-hidden"  messageWhenTooShort="{!$Label.c.CommunityExamTipline_CSCO_ID}" placeholder="{!$Label.c.CSCO_ID_Placeholder}" maxlength="12" minlength="12"/>
+                            <lightning:input  type="text" aura:id="csco" label="{!$Label.c.Cert_CSCO_No}"   name="CSCOID" value="{!v.csco}" messageWhenTooShort="{!$Label.c.CommunityExamTipline_CSCO_ID}" placeholder="{!$Label.c.Cert_CSCO_No}" maxlength="12" minlength="12"  onchange="{!c.itemsChange}" /> 
+                            
+                          
+                            <br/>
+                            <span style="color:red;">*</span><span class="manualproduct">{!$Label.c.Additional_Information}</span>
+                            <lightning:inputField fieldName="Additional_Information__c" variant="label-hidden"  aura:id="realInfo" required="true"/>
+                            
+                            <br></br>
+                            <lightning:fileUpload aura:id="auraFile" label="{!$Label.c.Attachments}" multiple="{!v.multiple}" 
+                                                  recordId="{!v.FilerecordId}" 
+                                                  onuploadfinished="{!c.handleUploadFinished}" />
+                            <lightning:inputField fieldName="Examtipline_Check__c" value="{!v.ExamtiplineCheckbox}" aura:id="ExamTipline" variant="label-hidden" style="display:none;"/>
+                            
+                            <!--    <span style="color:red">{!v.fileNames}</span><br/> -->
+                            <div class="showFileCountError" style="display:none;"><b>{!$Label.c.Attachment_Limit_Exceed}</b></div>
+                            <div class="showDuplicateError" style="display:none;"><b>Duplicate File Error : The File {!v.duplicateFilename} is already selected ! </b></div>
+                            <aura:iteration items="{!v.fileNames}" var="file" indexVar="i">
+                                
+                                <!-- Delete File Code by PO Starts-->
+                               
+                                <div class="slds-grid slds-gutters" >    
+                                      <div class="slds-col slds-size_2-of-6">
+                                <li class="slds-list__item slds-m-right_large slds-grid slds-truncate_container_80">
+                                 <span class="slds-m-left_xx-small slds-truncate">
+                                   <label style="color: #00BCEB !important;">*{!file}</label>
+                                 </span>
+                                 </li>
+                              </div>  
+                               <div class= "slds-col slds-size_1-of-6">     
+                                  <lightning:buttonIcon class="deleteButton" iconName="utility:delete" name="{!i}" size="small" variant="bare" alternativeText="Delete" onclick="{! c.handleDeleteFile }" iconClass="dark"/>
+                              </div>                     
+      
+                                    
+                       
+                                <!--    <div class="slds-col">
+                                        <span style="color:red">*{!file}</span>
+                                        <lightning:buttonIcon class="deleteButton" iconName="utility:delete" name="{!i}" size="small" variant="bare" alternativeText="Delete" onclick="{! c.handleDeleteFile }" iconClass="dark"/>
+                                    </div>-->
+                                                                      
+                                </div>
+                                 <!-- Delete File Code by PO Ends-->
+                            </aura:iteration> 
+                            
+                            <br></br>   <aura:if isTrue="{!v.showLoadingSpinner}">
+                            <div class="slds-text-body_small slds-text-color_error"> {!Label.c.Uploading}... 
+                                <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>
+                            </div>
+                            </aura:if>
+                            <!-- <div class="slds-page-header" role="banner">
+                              <h1 class="slds-page-header__title slds-m-right_small
+                          slds-truncate slds-align-left">  {!$Label.c.When_You_are_Done}... </h1> 
+                        </div>-->
+                            <br></br>
+                            <div class="slds-align_absolute-center" >  <lightning:button class="buttonclass" label="{!$Label.c.Community_Submit}" variant="Neutral"  disabled="{!v.disablebutton}" type="Submit" /></div>
+                            <!--  <div class="slds-align_absolute-center" > <button class="slds-button slds-button_brand" type="Submit"> Submit </button></div> -->
+                            <br></br>
+                        </lightning:recordEditForm>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        
+    </div>
+    
+    
+    
+    
+</aura:component>

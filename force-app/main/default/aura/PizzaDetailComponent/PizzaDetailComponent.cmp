@@ -1,0 +1,57 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="MyRetailer_Controller" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="allPizza" type="List" />
+    <aura:attribute name="allPizzaDrink" type="MyRetailer_Controller.ContactWrapperClass" />
+    <aura:attribute name="pizzaCount" type="Integer" default="0"/>
+    <aura:attribute name="currentPizza" type="Id" />
+    
+    <lightning:layout multipleRows="true">  
+        <aura:iteration items="{!v.allPizza}" var="item" >
+            <lightning:layoutItem padding="around-small" size="4">  
+                
+                <fieldset class="slds-box slds-theme--default slds-container--medium">
+                    <legend id="newaccountform" style="color:grey" class="slds-text-heading--x-small slds-p-vertical--small"></legend>
+                    <label style="font-size:14px;text-align:right;" align="right"  data-attriVal="{!item.Id}"  onmouseover="{!c.showDrinks}" >{!item.Name}</label> <br/>
+                    
+                    <ui:outputRichText aura:id="outputRT"  class="imgClass" value="{!item.Pizza_Image__c}" />
+                        
+                    <label style="font-size:12px;text-align:right;" align="right" >{!item.Price__c} $</label>
+                     <ul class="slds-has-dividers_bottom-space">
+                        <li class="slds-item" style="font-size:8px;color:steelblue">{!item.Pizza_Toppings__c} </li> 
+                    </ul>
+                    <ul class="slds-list--horizontal slds-has-dividers_right" style="float:right">
+                        <li class="slds-item" style="font-size:10px;color:maroon"><b>{!item.Pizza_Size__c}</b></li>   
+                        <li class="slds-item" style="font-size:9px;">{!item.Pizza_Type__c} </li>   
+                        
+                    </ul><br/>
+                    <lightning:button name="{!item}" variant="brand" onclick="{! c.addToCart }" iconName="utility:cart" iconPosition="right"  ><label style="font-size:10px;" >Add To Cart</label></lightning:button>
+                </fieldset>
+                
+            </lightning:layoutItem>
+        </aura:iteration>
+    </lightning:layout>
+    
+    
+    <lightning:layout multipleRows="true">  
+        <aura:iteration items="{!v.allPizzaDrink}" var="item" >
+            <lightning:layoutItem padding="around-small" size="4">  
+                
+                <fieldset class="slds-box slds-theme--default slds-container--medium">
+                    <legend id="newaccountform" style="color:grey" class="slds-text-heading--x-small slds-p-vertical--small"></legend>
+                    <label style="font-size:14px;text-align:right;" align="right"  >{!item.Name}</label> <br/>
+                    
+                    <ui:outputRichText aura:id="outputRT"  class="imgClass" value="{!item.Drink_Image__c}" />
+                        
+                    <label style="font-size:12px;text-align:right;" align="right" >{!item.Price__c} $</label>
+             
+                    <br/>
+                    <lightning:button name="{!item}" variant="brand" onclick="{! c.addToCart }" iconName="utility:cart" iconPosition="right"  ><label style="font-size:10px;" >Add Drink</label></lightning:button>
+                </fieldset>
+                
+                
+            </lightning:layoutItem>
+        </aura:iteration></lightning:layout>
+    
+    
+</aura:component>

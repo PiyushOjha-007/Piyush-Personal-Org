@@ -1,0 +1,61 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="MyRetailer_Controller" >
+	
+     <aura:attribute type="My_Orders__c[]" name="myOrderList"/>
+    <aura:attribute name="mycolumns" type="List"/>
+     
+    <aura:handler name="init" value="{!this}" action="{!c.fetchOrder}"/>
+     
+    
+    
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead style="font-size:12px">
+                                    <tr class="slds-line-height_reset">
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Number">Order Number</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Date">Order Date</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Details">Selected Pizzas</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Amount">Order Amount</div>
+                                        </th>
+                                        <th class="" scope="col">
+                                            <div class="slds-truncate" title="Order Placed By">Order Placed By</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody style="font-size:10px;">
+                                    <aura:iteration items="{!v.myOrderList}" var="order"> 
+                                        <tr class="slds-hint-parent">
+                                           
+                                            <td data-label="Order Number">
+                                                <div class="slds-truncate" title="Order Number">{!order.Name}</div>
+                                            </td>
+                                            <td data-label="Order Date">
+                                                <div class="slds-truncate" title="Order Date">
+                                                  <lightning:formattedDateTime value="{!order.CreatedDate}" year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" />  
+                                                    
+                                                </div>
+                                            </td>
+                                            <td data-label="Order Details">
+                                                <div class="slds-truncate" title="Order Details">{!order.Selected_Pizzas__c}</div>
+                                            </td>
+                                            <td data-label="Order Amoount">
+                                                <div class="slds-truncate" title="Order Amount">{!order.Order_Amount__c}</div>
+                                            </td>
+                                            <td data-label="Order Placed By">
+                                                <div class="slds-truncate" title="Order Placed By">{!order.Contact__r.Name}</div>
+                                            </td>
+                                            
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                            
+    
+    
+</aura:component>

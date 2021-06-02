@@ -1,0 +1,413 @@
+({
+    getAllCommentsOnCase : function(component) 
+    {
+        console.log('Inside getAllCommentsOnCase 1 PO');
+        var caseID = component.get("v.caseID");
+        var actionNow = component.get("c.getAllCaseComments");
+        actionNow.setParams({
+            "caseParentId" :caseID 
+        });
+        console.log('Inside getAllCommentsOnCase 2 PO:- ');
+        actionNow.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('Piyush testing'+state);
+            if (state === "SUCCESS") {
+                console.log('PIYUSH TEST  ');
+                var allComments = response.getReturnValue();
+                component.set("v.allComments",allComments);
+                console.log('total response'+allComments.length);
+                component.set("v.count", allComments.length);
+                
+                
+            }
+        });
+        $A.enqueueAction(actionNow);
+    },
+    updateCaseStatus : function(component,caseID,caseClosure,caseComments,business,mobile,files)
+    {
+        console.log('IN UPDATE CASE STATUS HELPER');
+        var action = component.get("c.setCaseStatusClose");
+        action.setParams({
+            "CaseId" : caseID,
+            "caseClosure" : caseClosure,
+            "caseComments" : caseComments,
+            "business" :business,
+            "mobile":mobile,
+            "files":files
+        });
+        
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('STATe'+state);
+            if (state === "SUCCESS") {
+                console.log('IN STATUS TO CLOSE METHOD ');
+                var setStatusClose = response.getReturnValue();
+                console.log('setStatusClose',setStatusClose);
+                
+                
+            }
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action);
+        
+    },
+    saveTheComments :function(component,caseComments){
+        var caseID = component.get("v.caseID");
+        console.log('Inside the Save COmments'+caseID);
+        var action = component.get("c.saveTheCaseComment");
+        action.setParams({
+            "caseComments" : caseComments,
+            "caseID":caseID
+        });
+        
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('STATe'+state);
+            if (state === "SUCCESS") {
+                console.log('IN STATUS TO CLOSE METHOD ');
+                var caseCommentsStatus = response.getReturnValue();
+                console.log('caseCommentsStatus',caseCommentsStatus);
+                
+                
+            }
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action);
+        
+    },
+    getCheckBoxValue :function(component,caseComments){
+        var caseID = component.get("v.caseID");
+        var action = component.get("c.getCheckBoxValue");
+        action.setParams({
+            "caseid":caseID
+        });
+        
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('STATe'+state);
+            if (state === "SUCCESS") {
+                console.log('In checkbox method');
+                var tempval = response.getReturnValue();
+                console.log('temp values returned'+tempval);
+                if(tempval.includes('Business')){
+                    component.set("v.businessCheckbox",true);
+                    var custs = ["email","business"];
+                    component.set("v.value",custs);
+                } 
+                if(tempval.includes('Mobile')){
+                    component.set("v.mobileCheckbox",true);
+                    var items = ["email","mobile"];
+                    component.set("v.value",items);
+                    if(tempval.includes('Mobile')&& tempval.includes('Business Phone')){
+                        items.push("business");
+                        component.set("v.value",items);
+                    }   
+                }
+                
+            }
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action);
+        
+    },
+    getPhonenumberValue:   function(component,caseComments){
+        var caseID = component.get("v.caseID");
+        var action = component.get("c.getCasePhonenumberValue");
+        action.setParams({
+            "caseid":caseID
+        });
+        
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('STATe in Phone Number Value'+state);
+            if (state === "SUCCESS") {
+                var tempval = response.getReturnValue();
+                
+                component.set("v.case",response.getReturnValue());
+                var caseDetails = component.get("v.case");
+       			 var caseDetails1 = JSON.parse(JSON.stringify(caseDetails));
+                console.log('In PHONE NUMEBR Method Piyush '+JSON.stringify(caseDetails));
+                if(caseDetails1.Area_Code_Business__c != null )
+                {
+                    console.log('Inside Defined Area Code'+caseDetails1.Area_Code_Business__c);
+                    component.set("v.selectedBusinessArea","+"+caseDetails1.Area_Code_Business__c);
+                    component.set("v.test",caseDetails1.Business_Phone__c);
+
+                }
+                else
+                {
+                    console.log('Inside Undefined Area Code');
+                    component.set("v.selectedBusinessArea","Country Code");
+                }
+               if(caseDetails1.Mobile_Area_Code__c != null )
+                {
+                    component.set("v.selectedMobileArea","+"+caseDetails1.Mobile_Area_Code__c);
+                }
+        		else
+                {
+                    console.log('Inside Undefined Area Code');
+                    component.set("v.selectedMobileArea","Country Code");
+                }
+                
+            }
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action);
+        
+    },
+    deleteFileOnCase : function(component,fileToDelete) 
+    {
+        var actionNow = component.get("c.deleteCaseFiles");
+        actionNow.setParams({
+            "deleteFileId" :fileToDelete 
+        });
+        actionNow.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('Piyush testing in Delete'+state);
+            if (state === "SUCCESS") {
+                console.log('PIYUSH TEST  ');
+                var allComments = response.getReturnValue();               
+                console.log('DELETED FILES :',allComments);
+            }
+        });
+        $A.enqueueAction(actionNow);
+        
+    },
+    loadAllCountryCode : function(component){
+        console.log('In COuntry');
+        var action = component.get("c.getAllCountryCode");            
+        action.setCallback(this, function(a){
+            var state= a.getState();    
+            console.log('In COuntry state'+state);            
+            if(state === 'SUCCESS')
+            {
+                var rtnValue = a.getReturnValue();
+                component.set("v.channels",rtnValue);
+                var countryCode = component.get("v.channels").map(function(channel) 
+                                                                  { return { value: channel.Country_Area_Code__c, text: channel.Name+' +'+channel.Country_Area_Code__c } });
+                
+                component.set("v.CountryCodeOption", countryCode);
+                
+                
+            }   
+            
+            
+            
+        });
+        $A.enqueueAction(action);
+        
+    },
+     getAttachments :function(component){
+        var caseID = component.get("v.caseID");
+        var action = component.get("c.getAttachments");
+        action.setParams({
+            "caseid":caseID
+        });
+        
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('STATe'+state);
+            if (state === "SUCCESS") {
+                var tempval = response.getReturnValue();
+                 component.set('v.docs',tempval);
+                 component.set("v.dcount", tempval.length);
+                console.log('temp values returned'+tempval.length);
+                
+                           
+            }
+                
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action);
+        
+    },
+      getFiles :function(component){
+        var caseID = component.get("v.caseID");
+        var action = component.get("c.getContentDocs");
+        action.setParams({
+            "caseid":caseID
+        });
+        
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            console.log('STATe'+state);
+            if (state === "SUCCESS") {
+                var tempval = response.getReturnValue();
+                 component.set('v.contentdocs',tempval);
+                 component.set("v.ContentCount", tempval.length);
+                console.log('temp values returned'+tempval.length);
+                           
+            }
+                
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action);
+        
+    },
+    
+    getCaseStatusValue : function(component,caseComments){
+      //	  alert("nishant");
+        var caseID = component.get("v.caseID");
+        var action = component.get("c.getCaseStatus");
+        action.setParams({
+            "caseid":caseID
+        });
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            
+            if (state === "SUCCESS") {
+                var tempval = response.getReturnValue();
+               console.log('status value retured>>>>>>'+tempval);
+              /*  component.set("v.caseForStatus",tempval);
+                var caseStatusDetails = component.get("v.caseForStatus");
+       			 var caseStatusDetailValue = JSON.parse(JSON.stringify(caseStatusDetails));
+                 console.log('case status nishant'+caseStatusDetailValue.Status);
+                    component.set("v.casestatus",caseStatusDetailValue.Status);
+                  */
+                if(tempval === 'Solved')
+                {
+                    component.set("v.requestclose", false);
+                }
+                else{
+                    component.set("v.requestclose",true);
+                }
+                    
+                           
+            }
+                
+            else if (state === "INCOMPLETE") {
+                // do something
+            }
+                else if (state === "ERROR") {
+                    var errors = response.getError();
+                    if (errors) {
+                        if (errors[0] && errors[0].message) {
+                            console.log("Error message: " + 
+                                        errors[0].message);
+                        }
+                    } else {
+                        console.log("Unknown error");
+                    }
+                }
+        });
+        $A.enqueueAction(action);
+    },
+      getCaseAge : function(component , caseComments) 
+        {
+        console.log('Inside case age loop 1');
+        var caseID = component.get("v.caseID");
+        var actionNow = component.get("c.canOpenCase");
+        actionNow.setParams({
+            "caseid":caseID
+        });
+        console.log('Inside case age loop 2 :- ');
+        actionNow.setCallback(this, function(response) {
+            var state = response.getState();
+        //   console.log('Anuroop get case age state : '+state);
+            if (state === "SUCCESS") {
+                console.log('Success from case age'+response.getReturnValue());
+                var rtnresp = response.getReturnValue();
+                component.set("v.caseCantUpdate",rtnresp); 
+                if(rtnresp == false){
+                component.set("v.showdesc",true);
+                }
+                if(rtnresp == true){
+                    component.set("v.showdesc",false);
+                }
+            }
+        });
+        $A.enqueueAction(actionNow);
+    }
+    ,
+    saveFileOnCase : function(component,docuId,caseId)
+    {
+            
+    
+}
+})

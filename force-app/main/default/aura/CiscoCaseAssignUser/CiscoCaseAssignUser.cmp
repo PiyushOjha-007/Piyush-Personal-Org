@@ -1,0 +1,42 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute type="List" name="CaseList"/>
+    <aura:attribute type="boolean" name="openLookupComp" default="false"/>
+    <aura:attribute name="checkBoxCount" type="Integer" default="0"/>
+    <aura:attribute type="List" name="casesId"/>
+    <aura:if isTrue="{!v.openLookupComp}">
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="color:black">
+            <header class="slds-modal__header" style="padding:0">
+                <lightning:buttonIcon iconName="utility:close"
+                                      onclick="{! c.closeModel }"
+                                      alternativeText="close"
+                                      variant="inverse"
+                                      class="slds-modal__close"/>
+                
+                
+            </header>
+            
+            <div class="slds-modal__content slds-p-around_small" id="modal-content-id-1">
+                
+                <div class="slds-form">
+                    
+                    <div class="slds-form-element slds-form-element_horizontal">
+                        <label class="slds-form-element__label" for="horizontal-input-id-01">Select User:</label>
+                        <div class="slds-form-element__control">
+                            <ui:inputText class="slds-input" aura:id="horizontal-input-id-01" required="true"/>
+                        </div>
+                    </div>
+                    
+                  <br/>
+                                                                         
+                </div>
+                
+            </div>                   
+            
+        </div>
+    </section>
+    
+    </aura:if>
+    
+</aura:component>

@@ -1,0 +1,97 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <article class="slds-card" >
+        <div class="slds-card__header slds-grid" style="text-align:center">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate"> 
+                <div class="slds-media__body">
+                    <img src="/resource/CiscoLogo" /><br/>
+                    <h2 class="slds-card__header-title">    
+                        <div class="slds-text-heading_large">Create Account</div><br/>
+                        <span>Already have an account? <a href="#"> Sign In </a> </span>
+                    </h2>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-form">
+                <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-01">Email</label>
+                    <div class="slds-form-element__control">
+                        <input type="text" id="stacked-input-id-01" class="slds-input" />
+                    </div>
+                </div>
+                <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-02">First Name</label>
+                    <div class="slds-form-element__control">
+                       <input type="text" id="stacked-input-id-02" class="slds-input" />
+                    </div>
+                </div>
+                <div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-03">Last Name</label>
+                    <div class="slds-form-element__control">
+                       <input type="text" id="stacked-input-id-03" class="slds-input" />
+                    </div>
+                </div>
+				<div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-04">Country or Region</label>
+                    <div class="slds-form-element__control">
+                       <input type="text" id="stacked-input-id-04" class="slds-input" />
+                    </div>
+                </div>
+				<div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-05">Company</label>
+                    <div class="slds-form-element__control">
+                       <input type="text" id="stacked-input-id-05" class="slds-input" />
+                    </div>
+                </div>
+				<div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-06">Password</label>
+                    <div class="slds-form-element__control">
+                       <input type="password" id="stacked-input-id-06" placeholder="Create a password" class="slds-input" />
+                    </div>
+                </div>
+				<div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-07">Confirm Password</label>
+                    <div class="slds-form-element__control">
+                       <input type="password" placeholder="Re-Enter your password" id="stacked-input-id-07" class="slds-input" />
+                    </div>
+                </div>
+				<div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-08">Would you like updates about Cisco promotions , products and Services.</label>
+                </div>
+                <fieldset class="slds-form-element slds-form-element_stacked">
+                    <legend class="slds-form-element__legend slds-form-element__label">Email </legend>
+                    <div class="slds-form-element__control">
+                        <span class="slds-radio">
+                            <input type="radio" id="radio-13" value="radio-13" name="options" />
+                            <label class="slds-radio__label" for="radio-13">
+                                <span class="slds-radio_faux"></span>
+                                <span class="slds-form-element__label">Yes</span>
+                            </label>
+                        </span>
+                        <span class="slds-radio">
+                            <input type="radio" id="radio-14" value="radio-14" name="options" />
+                            <label class="slds-radio__label" for="radio-14">
+                                <span class="slds-radio_faux"></span>
+                                <span class="slds-form-element__label">No</span>
+                            </label>
+                        </span>
+                    </div>
+                </fieldset><br/>
+				<div class="slds-form-element slds-form-element_stacked">
+                    <label class="slds-form-element__label" for="stacked-input-id-09">By Clicking Register, I confirm that I have read and agree to the <br/><a href="#"> Cisco Online Privacy Statements and the <br/>Cisco Website Terms and Conditions.</a></label>
+                </div>
+				<button class="slds-button slds-button_brand">Register</button>
+            </div>
+        </div>
+        <footer class="slds-card__footer" text-align="center" style="background:lightgrey">
+            <div class="slds-text-title_caps" align="left">
+                <a href="#">
+                Contact Support |Feedback |Cookies Policy |Trademarks
+                </a>
+            </div> 
+            
+        </footer>
+    </article>
+    
+</aura:component>

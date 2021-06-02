@@ -1,0 +1,137 @@
+<aura:component >
+	
+     <aura:handler name="init" value="{!this}" action="{!c.loadInit}" /> 
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <!-- 'fileName' attribute for display the selected file name -->  
+    <aura:attribute name="email" type="String"/> 
+    <aura:attribute name="subject" type="string"  />
+    <aura:attribute name="desc" type="string"  />
+    <aura:attribute name="csco" type="string"  />
+    <aura:attribute name="dealershiptTeamRecord" type="Boolean" default="true" /> 
+    <aura:attribute name="ExamtiplineCheckbox" type="Boolean" default="true" />
+    <aura:attribute name="FilerecordId" type="String" />
+    <aura:attribute name="disabled" type="Boolean" default="false"/>
+    <aura:attribute name="caseObj" type="Case" />
+    <aura:attribute name="documentIds" type="String" />
+    
+    <aura:attribute name="fileNames" type="String[]" />
+    <aura:attribute name="fn" type="List" />
+    <aura:attribute name="NewfileNames" type="String" />
+    <aura:attribute name="mobileChecked" type="boolean" default="false" />
+    <aura:attribute name="businessChecked" type="boolean" default="false" />
+    <aura:attribute name="value" type="List" default="['email']"/>
+    <aura:attribute name="businessphone" type="string"  />
+    <aura:attribute name="mobilephone" type="string"  />
+    <aura:attribute name="caseWorkingRecordType" type="Id"  />
+    <!-- 'fileName' attribute for display the selected file name -->  
+    <aura:attribute name="fileName" type="String" default="" />
+    
+    <!-- Duplicate FileName Attributes Starts by PO -->
+    <aura:attribute name="duplicateFilename" type="String" default="" />
+    <aura:attribute name="duplicateFiles" type="String[]" />
+    <!-- Duplicate FileName Attributes Ends by PO -->
+    
+    <aura:attribute name="caseID" type="String" />
+    <aura:attribute name="fileCount" type="Integer" default="0"/>
+    
+    <!-- Lightning Input with file type and on file change call the 'handleFilesChange' controller --> 
+    
+    <!--  <aura:attribute name="newCase" type="Case"
+                    default="{ 'sobjectType': 'Case',
+                             'Status': '',
+                             'Origin': '',	
+                             'Subject': '',
+                             'Description': '',
+                             }"/>-->
+    <aura:attribute name="multiple" type="Boolean" default="false"/>
+    <aura:attribute name="newCase" type="Case"  default="{'sobjectType': 'Case'}"/>
+    <aura:attribute name="newCaseObj" type="Case"  default="{'sobjectType': 'Case'}"/>
+    
+    <div style="background-color:#f5f5f6 !important; padding:inherit !important;">
+        <div class="headerclass">  
+            <label style="font-size:40px;padding-left: 25px;"></label>    
+            <div class="slds-align-right" align="right" style="padding-right:25px;font-size:14px;" > <span style="color:red;">*&nbsp;</span></div> 
+        </div>
+        
+        <div class="" style="padding-left: 25px; padding-right:25px;padding-bottom:25px;">
+            
+            <div style="background-color: #ffffff !important;font-size: 14px;">
+                <div class="slds-align_absolute-right" style="padding-top:15px;padding-right:10px;" align="right">    <a style="color:rgb(0, 188, 235);font-size: 14px; font-weight: bold;" href="https://cscsandbox-learningatcisco.cs43.force.com/s/examsecuritytiplinelink"></a></div>
+                <!--  <div class="slds-text-heading_medium" style="padding-left: 32px;padding-top: 20px;" >
+                    {!$Label.c.Community_Exam_Tipline} 
+                </div><br /> -->
+                <div style="background-color: #ffffff !important;font-size: 14px;padding-left: 32px;
+                            padding-top: 0px;padding-right: 32px;">    
+                    <div style="font-size: 14px;padding-left: 250px;
+                                20px;padding-right: 250px;"  >
+                        <lightning:recordEditForm objectApiName="Case" recordTypeId="{!v.caseWorkingRecordType}" onsubmit="{!c.doSave}"  onsuccess="{!c.handleSuccess}"  onerror="{!c.handleError}">
+                            <lightning:messages />
+                            <!-- <span style="color:red;">*</span><span class="email">{!$Label.c.CommunityExamTipline_EmailAddress}</span> -->
+                            <lightning:input label=""  name="emailaddress" value="{!v.email}" placeholder="" required="true" aura:id="email1" messageWhenValueMissing="" onkeyup="{!c.itemsChange}" />
+                            <lightning:inputField fieldName="Email__c" required="true" aura:id="email" variant="label-hidden"  style="display:none;"/><br></br>
+                            <lightning:input label="" name="Case Subject" required="true"  aura:id="subject1" class="subject" messageWhenBadInput="Please insert not more than 50 character" maxlength="50"  placeholder="" messageWhenValueMissing="" messageWhenTooLong="More than 50 characters entered; Please reduce the length of the description" onchange="{!c.itemsChange}"/>   
+                            <lightning:inputField fieldName="Subject" required="true" aura:id="subject" variant="label-hidden" style="display:none;"/>
+                            <br></br>   <lightning:textarea label="" required="true"  name="Case Desc" maxlength="20000" value="{!v.desc}" aura:id="desc1"  placeholder="" messageWhenValueMissing="" messageWhenTooLong="More than 20000 characters entered; Please reduce the length of the description" onkeyup="{!c.itemsChange}" />
+                            <lightning:inputField fieldName="Description" required="true" aura:id="desc" variant="label-hidden" style="display:none;"/>
+                            <br></br>
+                            <lightning:inputField fieldName="Cisco_ID_CSCO__c" style="display:none;"  aura:id="product" variant="label-hidden"  messageWhenTooShort=""  maxlength="12" minlength="12"/>
+                            <lightning:input  type="text" aura:id="csco" label=""   name="CSCOID" value="{!v.csco}" messageWhenTooShort="" placeholder="" maxlength="12" minlength="12"  onkeyup="{!c.itemsChange}" /> 
+                            <br></br><!-- <span style="color:red;">*</span><span class="manualproduct">Additional Information</span> -->
+                            <!-- <lightning:inputField fieldName="Additional_Information__c" required="true" messageWhenValueMissing="{!$Label.c.Additional_Information_Error_Message}" aura:id="addInfo" /> -->
+                            <lightning:select name="select1" label="" required="true" >
+                                <option value="">choose one...</option>
+                                <option value="1">Candidate Misconduct</option>
+                                <option value="2">Candidate Appeal</option>
+                                <option value="3">Test Center Misconduct</option>
+                                <option value="4">General Security Information</option>
+                                <option value="5">Website Misconduct</option>
+                            </lightning:select>
+                            <br></br>
+                            <lightning:fileUpload aura:id="auraFile" label="" multiple="{!v.multiple}" 
+                                                  recordId="{!v.FilerecordId}" 
+                                                  onuploadfinished="{!c.handleUploadFinished}" />
+                            <lightning:inputField fieldName="Examtipline_Check__c" value="{!v.ExamtiplineCheckbox}" aura:id="ExamTipline" variant="label-hidden" style="display:none;"/>
+                            
+                            <!--    <span style="color:red">{!v.fileNames}</span><br/> -->
+                            <div class="showFileCountError" style="display:none;"><b>Attachment Limit Exceeded ! Only 10 Files can be uploaded</b></div>
+                            <div class="showDuplicateError" style="display:none;"><b>Duplicate File Error : The File {!v.duplicateFilename} is already selected ! </b></div>
+                            <aura:iteration items="{!v.fileNames}" var="file" indexVar="i">
+                                
+                                <!-- Delete File Code by PO Starts-->
+                               
+                                
+                                <div class="slds-grid slds-gutters" >    
+                                    
+                                    <div class="slds-col slds-size_1-of-7">
+                                        <span style="color:red">*{!file}</span>
+                                    </div>
+                                    <div class="slds-col slds-size_6-of-7">
+                                        <lightning:buttonIcon class="deleteButton" iconName="utility:delete" name="{!i}" size="small" variant="bare" alternativeText="Settings" onclick="{! c.handleDeleteFile }" iconClass="dark"/>
+                                    </div>
+                                </div>
+                                 <!-- Delete File Code by PO Ends-->
+                            </aura:iteration> 
+                            
+                            <br></br>   <aura:if isTrue="{!v.showLoadingSpinner}">
+                            <div class="slds-text-body_small slds-text-color_error"> ... 
+                                <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>
+                            </div>
+                            </aura:if>
+                            <!-- <div class="slds-page-header" role="banner">
+                              <h1 class="slds-page-header__title slds-m-right_small
+                          slds-truncate slds-align-left">  {!$Label.c.When_You_are_Done}... </h1> 
+                        </div>-->
+                            <br></br>
+                            <div class="slds-align_absolute-center" >  <lightning:button class="buttonclass" label="" variant="Neutral" type="Submit" /></div>
+                            <!--  <div class="slds-align_absolute-center" > <button class="slds-button slds-button_brand" type="Submit"> Submit </button></div> -->
+                            <br></br>
+                        </lightning:recordEditForm>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        
+    </div>
+    
+    
+</aura:component>

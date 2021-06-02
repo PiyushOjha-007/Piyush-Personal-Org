@@ -1,0 +1,86 @@
+({
+	doInit : function(component, event, helper) {
+		helper.populateCountry(component);
+        helper.loadAllCountryCode(component);
+        helper.getContactInfo(component);
+	},
+    updateContact : function(component, event, helper) {
+		var newCon = component.get("v.newCon");
+        
+        var fname = component.find('fname');
+        var lname = component.find('lname');
+        var ciscologin = component.find('ciscologin');
+        
+        var fnamevalue = component.find('fname').get("v.value");
+        var lnamevalue = component.find('lname').get("v.value");
+        var ciscologinvalue = component.find('ciscologin').get("v.value");
+        var countryvalue = component.find('country').get("v.value");
+        var phonevalue = component.find('phone').get("v.value");
+        var TempCountryCode = component.get("v.selectedAreaCode");
+        var countrycode;
+      
+      
+        if(TempCountryCode.includes("+"))
+        {
+            countrycode = TempCountryCode.replace('+','');
+        }
+        else
+        {
+          if(TempCountryCode == 'Country Code'){
+            countrycode = null;
+        }
+            else{
+            countrycode = TempCountryCode;
+            }
+        }
+         
+        
+        console.log('fnamevalue'+fnamevalue);
+        console.log('lnamevalue'+lnamevalue);
+        console.log('ciscologinvalue'+ciscologinvalue);
+        console.log('countryvalue'+countryvalue);
+        console.log('phonevalue'+phonevalue);
+        console.log('countrycode'+countrycode);
+        
+        newCon.FirstName = fnamevalue;
+        newCon.LastName = lnamevalue;
+        newCon.Cisco_com_Login__c = ciscologinvalue;
+        newCon.Phone = phonevalue;
+        newCon.Country__c = countryvalue;
+        newCon.Country_Area_Code__c = countrycode;
+        
+        
+        
+        
+       
+       // console.log('newCon',JSON.parse(newCon));
+        
+        if(fname.get("v.validity").valid && lname.get("v.validity").valid && ciscologin.get("v.validity").valid)
+        {
+            console.log('Valid NOW');
+            helper.updateContactDetails(component,newCon);
+        }
+        else
+        {
+			console.log('INValid NOW');  
+            ciscologin.showHelpMessageIfInvalid();
+            fname.showHelpMessageIfInvalid();
+            lname.showHelpMessageIfInvalid();
+        }
+        
+	},
+     handleChange : function(component, event, helper) {
+          
+        var countrycode = component.find("countrycode").get("v.value");
+        component.set("v.saveSelectedCountry",countrycode);
+        var ccode ="+"+countrycode;
+        console.log('COuntry Code'+countrycode+'COde'+ccode);
+        component.set("v.selectedAreaCode",ccode);
+        component.find("countrycode").set("v.value",component.get("v.selectedMobileArea"));        
+        console.log('What Now'+component.find("countrycode").get("v.value"));
+
+        
+            
+        
+    }
+})

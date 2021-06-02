@@ -1,0 +1,154 @@
+({
+    jsLoaded: function(component, event, helper) {
+        helper.loadAllCountryCode(component,event);
+        var locale = $A.get("$Locale.language");
+        var currtimezone = $A.get("$Locale.timezone");
+        //alert('ready to go'+currtimezone);
+        console.log('Locale here ',locale);
+        console.log('currtimezone here ',currtimezone);
+        var localDate = new Date();
+        console.log('Local Date in Your Laptop : '+localDate);
+        var timezone = localDate.getTimezoneOffset();
+        console.log('Piyush test timezone:',timezone); 
+        
+        var timeZoneNow = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if(timeZoneNow == 'Asia/Calcutta')
+        {
+            console.log('HERE');
+            timeZoneNow = 'Asia/Kolkata';
+            console.log('HERE TZ',timeZoneNow)
+        }
+        console.log('piyush code for timezone'+timeZoneNow);
+        helper.populateCountry(component,event,helper);
+        // alert(currtimezone);
+        // alert(langus);
+        component.set("v.ltngTimeZone",timeZoneNow);
+        component.set("v.ltnglanguage",locale);
+        
+        // alert('load');
+        /*  var pageReference = {
+            type: 'standard__component',
+            attributes: {
+                pageName: 'accountcreated',
+            },
+            state: {
+                
+            }
+        };
+        component.set("v.pageReference", pageReference);
+        */
+        //alert("Using Locale " + locale);
+    },
+    registeruser: function(component, event, helper){
+        // alert("Button  call");
+         component.set("v.EmailExistError", false);
+        var newCon = component.get("v.newCon");
+        var concode = component.get("v.saveSelectedCountry");
+        console.log('Con COde'+concode);
+        var country = component.find("CountryPicklist").get("v.value");
+        console.log('country'+country);
+        newCon.Country__c = country;
+        newCon.Country_Area_Code__c = concode;
+        // var newUser = component.get("v.newUser"); //
+        
+        var firstname = component.find('firstname');
+        var lastname = component.find('lastname');
+        var email = component.find('email');
+        var ciscologin = component.find('ciscologin');
+        var csco = component.find('csco');
+        var countryPicklist = component.find("CountryPicklist");
+        
+        console.log('Contact to be inserted:',newCon);
+        
+        console.log("Contact 1",csco.get("v.validity").valid);
+        console.log("Contact 2",ciscologin.get("v.validity").valid);
+        
+        if(csco.get("v.validity").valid && countryPicklist.get("v.validity").valid && ciscologin.get("v.validity").valid && firstname.get("v.validity").valid && lastname.get("v.validity").valid && email.get("v.validity").valid)
+        {
+            
+            var localeLtg = component.get("v.ltnglanguage");
+            var localeLtimezone = component.get("v.ltngTimeZone");
+            var action = component.get("c.getContact");
+            //  alert ('language passed is :'+localeLtg);
+            // alert('HI 1');
+            action.setParams({
+                "con" : newCon,
+                "language" : localeLtg,
+                "localeLtimezone" : localeLtimezone
+            });
+            
+            action.setCallback(this, function(a){
+                var state= a.getState();
+                // alert('HI 2');
+                console.log('Piy State**********',state);
+                //var rtnValue = response.getReturnValue();
+                
+                if(state === 'SUCCESS')
+                {
+                    
+                    var rtnValue = a.getReturnValue();
+                    console.log("if"+rtnValue);
+                    if(rtnValue == false)
+                    {
+                        // component.find('email').set('v.validity','Email address already exists');
+                        
+                        component.set("v.EmailExistError", true);
+                    }
+                    else
+                    {
+                        component.set("v.EmailExistError", false);
+                        component.set("v.Error",'');
+                        var evt = $A.get("e.force:navigateToURL");
+                        var PortalURL =  $A.get("$Label.c.CommunityBaseUrl");
+                        console.log("evt"+evt);
+                        evt.setParams({
+                            "url": window.open(PortalURL+'/s/accountcreated','_top'),
+                            "isredirect": true
+                        });
+                        
+                        evt.fire();
+                    }
+                } 
+                
+                
+            });
+            $A.enqueueAction(action);
+        }
+        else{
+            console.log('In Error Area');
+            component.find('firstname').showHelpMessageIfInvalid();
+            component.find('lastname').showHelpMessageIfInvalid();
+            component.find('email').showHelpMessageIfInvalid();
+            component.find('ciscologin').showHelpMessageIfInvalid();
+            component.find('csco').showHelpMessageIfInvalid();
+            component.find('CountryPicklist').showHelpMessageIfInvalid();
+            
+        }
+    },
+    
+    valueChangeValidation : function(component, event, helper) {
+        var inputField = component.find('firstname');
+        var value = inputField.get('v.value');
+        if(value != '') {
+            inputField.set('v.validity', {valid:false, badInput :true});
+            inputField.showHelpMessageIfInvalid();
+            
+        }
+    },
+    
+    handleChange : function(component, event, helper) {
+          
+        var countrycode = component.find("countrycode").get("v.value");
+        component.set("v.saveSelectedCountry",countrycode);
+        var ccode ="+"+countrycode;
+        console.log('COuntry Code'+countrycode+'COde'+ccode);
+        component.set("v.selectedAreaCode",ccode);
+        component.find("countrycode").set("v.value",component.get("v.selectedMobileArea"));        
+        console.log('What Now'+component.find("countrycode").get("v.value"));
+
+        
+            
+        
+    }
+    
+})

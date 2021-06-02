@@ -1,0 +1,34 @@
+.itemContainer
+{
+    border : 1px solid grey;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-top: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2px;
+    width: inherit;
+    color:  white;
+    transition: all .5s ease;
+    font-weight:bold ;
+    font-family: sans-serif;
+
+}
+.completed{
+    background-color:green;
+    color:white;
+    font-weight: bolder;
+}
+.completed:hover{
+    background-color : white;
+
+}
+.upcoming{
+    background-color:brown;
+    color: white;
+    font-weight: bold;
+}
+.upcoming:hover{
+    background-color: azure;
+    
+}

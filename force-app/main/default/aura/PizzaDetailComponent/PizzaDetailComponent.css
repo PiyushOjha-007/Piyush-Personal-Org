@@ -1,0 +1,19 @@
+.THIS .pizzaDetails{
+    border:1px inset white;
+    border-radius:4px;
+    width:200px;
+    
+}
+.THIS .max-5 {
+    max-height: 8.2em;
+}
+
+.THIS .slds-form-element__label
+{
+    font-size:1px;
+}
+.THIS .imgClass
+{
+    width:100px;
+    height:100px;
+}

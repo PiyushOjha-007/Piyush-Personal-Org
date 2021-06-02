@@ -1,0 +1,466 @@
+({
+    doInit:function(component, event, helper){
+        component.set("v.isLoaded",true);
+        component.set("v.disablebutton",false);
+        var UserEmail =  $A.get("$SObjectType.CurrentUser.Email");
+        var userId = $A.get("$SObjectType.CurrentUser.Id");
+        var userLang = $A.get("$SObjectType.CurrentUser.LanguageLocaleKey");
+        var userlocalelang = $A.get("$Locale.language");
+        var localelan = $A.get("$Locale.userLocaleLang");
+        console.log('user locale lang'+userlocalelang+'locale lan'+localelan);
+        if(userlocalelang == 'zh' || localelan == 'zh' )
+        {
+            component.find('origin').set("v.value",'Web - Chinese');
+        }
+        /*
+       else if(userlocalelang == 'es' || localelan == 'es' )
+        {
+            component.find('origin').set("v.value",'Web - Spanish');
+        } */          
+       else if(userlocalelang == 'ja' || localelan == 'ja')
+        {
+            component.find('origin').set("v.value",'Web - Japanese');
+        }         
+       else if(userlocalelang == 'en' || localelan == 'en')
+        {
+            component.find('origin').set("v.value",'Web - English');
+        } 
+        else{
+            component.find('origin').set("v.value",'Web - English');
+        }
+        
+        helper.getLoggedInUserCountry(component,userId);
+        helper.loadAllCountryCode(component);
+        
+        
+        console.log('User Id'+userId+'UserEmail'+UserEmail+'userlocalelang'+userlocalelang);
+        component.set("v.recordId",userId);
+        component.set("v.email",UserEmail);
+        // Custom Label used in Checkbox label //
+        const values = [
+            {'label': $A.get("$Label.c.Open_Case_Business_Phone"), 'value': 'business' },                                           
+            {'label': $A.get("$Label.c.Open_Case_Mobile_Phone"), 'value': "mobile" },
+            {'label': $A.get("$Label.c.Open_Case_Email_Default"), 'value': "email" },];
+            component.set('v.options', values);
+            },
+            
+            handleUploadFinished : function(component, event, helper)
+            {
+            var isDuplicateFile = false;  
+            var fileCount = component.get("v.fileCount");
+            var fn = component.get("v.fn");
+            
+            var uploadedFilesName = [];
+        uploadedFilesName = event.getParam("files");
+        
+        // Duplicate File Name Scenario Starts by PO //
+        var duplicateFile = component.get("v.duplicateFiles");
+        console.log('duplicateFile',duplicateFile);
+        
+        for(var i = 0 ; i < duplicateFile.length ; i++)
+        {
+            
+            if(duplicateFile[i] == uploadedFilesName[0].name)
+            {
+                console.log('Duplicate File There');
+                isDuplicateFile = true;
+                component.set("v.duplicateFilename",uploadedFilesName[0].name);
+            }
+        }
+        // Duplicate File Name Scenario Ends by PO //
+        
+        console.log('fileCount'+fileCount);
+        if(fileCount == 10 || fileCount > 9)
+        {    
+            var elements = document.getElementsByClassName("showFileCountError");
+            elements[0].style.display = 'block';
+        }
+        else if(isDuplicateFile == true)
+        {
+            console.log('Duplicate File Found');
+            var elements = document.getElementsByClassName("showDuplicateError");
+            elements[0].style.display = 'block';
+        }
+            else
+            {
+                var elements = document.getElementsByClassName("showDuplicateError");
+                elements[0].style.display = 'none';
+                var prevDocId = component.get("v.documentIds");
+                var NewfileNames = component.get('v.fileNames');
+                var uploadedFiles = [];
+                uploadedFiles = event.getParam("files");
+                var documentIds = [];
+                var fileNames = [];
+                for(var i = 0 ; i<uploadedFiles.length ; i++)
+                {
+                    component.set("v.duplicateFiles["+fileCount+"]",uploadedFiles[0].name);
+                    documentIds.push(uploadedFiles[i].documentId);
+                    fileNames.push(uploadedFiles[i].name);
+                }
+                console.log('documentIds',documentIds);
+                console.log('fileNames',fileNames);
+                component.set("v.fn["+fileCount+"]",uploadedFiles[0].name);
+                component.set("v.fileNames",fn);
+                
+                
+                component.set("v.documentIds["+fileCount+"]",uploadedFiles[0].documentId);
+                
+                
+                
+              //  component.set("v.documentIds",documentIds+'-'+prevDocId);
+                component.set("v.fileCount",fileCount+1);
+                console.log('Ended with '+component.get("v.documentIds"));
+            }
+        
+    },
+    doSave: function(component, event, helper) {
+      
+    // Piyush Ojha Try Starts
+       console.log('Hi in save');
+      component.set("v.disablebutton",true);  
+       var businesscountrycode = component.get("v.selectedBusinessArea"); //component.find('businesscountrycode').get("v.value");
+       var mobilecountrycode = component.get("v.selectedMobileArea"); //component.find('mobilecountrycode').get("v.value");
+       var mobileRequired =   component.get("v.mobileCheckbox");
+       var businessRequired = component.get("v.businessCheckbox");
+        
+        console.log('businesscountrycode :'+businesscountrycode+'mobilecountrycode : '+mobilecountrycode);
+        console.log('businessRequired :'+businessRequired+'mobileRequired : '+mobileRequired);
+       if((mobileRequired && businessRequired && mobilecountrycode == 'Country Code' && businesscountrycode == 'Country Code' ) || (mobileRequired == true && mobilecountrycode == 'Country Code' ) || (businessRequired == true && businesscountrycode == 'Country Code'))
+       {
+           console.log('HI Inside Prevent Event');
+           event.preventDefault();
+       } 
+        if(businessRequired && businesscountrycode == 'Country Code'  || businessRequired == true && businesscountrycode == 'Country Code' )
+        {
+            component.set("v.showerror",true);
+            component.set("v.disablebutton",false);
+        }
+        if(mobileRequired && mobilecountrycode == 'Country Code' ||  mobileRequired == true && mobilecountrycode == 'Country Code'  ){
+            component.set("v.displayerror",true);
+            component.set("v.disablebutton",false);
+
+        }
+        if(businessRequired == true && businesscountrycode != 'Country Code' && mobileRequired == true && mobilecountrycode != 'Country Code'){
+               event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email  Business  Mobile";
+            component.find('myform').submit(eventFields);
+        }
+        if (mobileRequired == true && mobilecountrycode != 'Country Code' && businessRequired != true ){
+          //  alert('into this loop');
+              event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email Mobile";
+            component.find('myform').submit(eventFields);
+        }
+        if(businessRequired == true && businesscountrycode != 'Country Code' && mobileRequired != true){
+                  event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email Business";
+            component.find('myform').submit(eventFields);    
+        }
+        if (businessRequired == false && mobileRequired == false){
+               event.preventDefault(); // stop form submission
+             var eventFields = event.getParam("fields");
+              eventFields["Contact_Preference__c"] = "Email";
+            component.find('myform').submit(eventFields);   
+        }
+
+        // Piyush Ojha Try Ends
+        
+    },
+    
+    handleFilesChange: function(component, event, helper) {
+        var fileName = 'No File Selected..';
+        if (event.getSource().get("v.files").length > 0) {
+            fileName = event.getSource().get("v.files")[0]['name'];
+        }
+        component.set("v.fileName", fileName);
+        
+    },
+    
+    handleSuccess : function(component, event, helper) {
+        /************************** Lightning File Upload Code Starts by PO*************************/
+        
+        console.log('IN HANDLE SUCCESS');
+        var payload = event.getParams().response;
+        var caseObj = JSON.parse(JSON.stringify(payload));
+        var caseNumber = caseObj.fields.CaseNumber.value; 
+        var docuId = component.get("v.documentIds");
+        helper.runAssignmentRule(component,payload.id);
+        console.log('Case Id'+payload.id+' Case Number : '+caseNumber+'DOcument ID'+docuId);
+        
+        if(docuId == '' || docuId == null || docuId == 'undefined')
+        {
+            
+            var urlEvent = $A.get("e.force:navigateToURL");
+            urlEvent.setParams({
+                "url": "/caseconfirmation/?casenumber="+caseNumber
+            });
+            urlEvent.fire();
+        }
+        else
+        {
+            
+            console.log('Inside Else');
+            var allDocId = [];
+            var docuIds = component.get("v.documentIds");
+            
+           /* var newIds = docuIds.split('-');
+            
+             newIds = newIds.filter(function( element ) {
+  				 return element !== "undefined";
+					});
+        
+           console.log('PIYUSH File newIds',newIds);
+            
+            
+           console.log('docuIds'+docuIds+' newIds : '+newIds+'Length :'+newIds.length);
+            for(var i = 0;i<newIds.length;i++)
+            {
+                allDocId.push(newIds[i]);
+            }
+            */
+            
+            
+            var action = component.get("c.saveFileWithCase");
+            console.log('Here It comes allDocId'+allDocId);
+            console.log('Here It comes payload ID'+payload.id);
+            action.setParams({ 
+                "docId" : docuIds,
+                "caseId" : payload.id
+            });
+            console.log('Here It comes 2');
+            action.setCallback(this, function(response) {
+                var state = response.getState();
+                console.log('state Here'+state);
+                if (state === "SUCCESS") {
+                    
+                    var successInsert = response.getReturnValue();
+                    console.log('successInsert Here'+successInsert);
+                    var urlEvent = $A.get("e.force:navigateToURL");
+                    urlEvent.setParams({
+                        "url": "/caseconfirmation/?casenumber="+caseNumber
+                    });
+                    urlEvent.fire();
+                }
+                else if (state === "INCOMPLETE") {
+                    // do something
+                }
+                    else if (state === "ERROR") {
+                        var errors = response.getError();
+                        if (errors) {
+                            if (errors[0] && errors[0].message) {
+                                console.log("Error message: " + 
+                                            errors[0].message);
+                            }
+                        } else {
+                            console.log("Unknown error");
+                        }
+                    }
+            });
+            $A.enqueueAction(action); 
+            
+            
+        }
+        /*************************** Lightning File Upload Ends ************************************/
+    },
+    phoneChange:function(component, event, helper){
+        
+        
+        var business = component.find("business").get("v.value");
+        var mobile = component.find("mobile").get("v.value");
+        
+        component.find("businesshidden").set("v.value",business);
+        component.find("mobilehidden").set("v.value",mobile);
+        component.set("v.disablebutton",false);
+    },
+    
+    itemsChange : function(component, event, helper){
+        //   alert('hi');
+        var subject = component.find("subject1").get("v.value");
+        var desc = component.find("desc1").get("v.value");
+        
+        
+        // alert(subject);
+        
+        
+        component.find("desc").set("v.value",desc);
+        
+        component.find("subject").set("v.value",subject);
+        
+    },
+    handleChange : function(component, event, helper){
+        var businessClass = component.find("business");
+        var mobileClass = component.find("mobile");
+        var phoneValues = [];
+        phoneValues = event.getParam("value");
+        console.log('phone values'+phoneValues.length);
+        console.log('phoneValues length : '+phoneValues.length);
+        for(var i = 0;i<=phoneValues.length;i++)
+        {
+            if(phoneValues.length == 3)
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('All Selected');
+                component.set("v.mobileChecked",true);
+                component.set("v.businessChecked",true);
+                break;
+            }
+            if(phoneValues.includes('business') && phoneValues.includes('mobile'))
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('Both Business Mobile here',phoneValues[i]);
+                component.set("v.businessChecked",true);
+                //   $A.util.removeClass(mobile, "slds-has-error");
+                component.set("v.mobileChecked",true);
+                break;
+            }
+            if(phoneValues[i]=='business')
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('Business here',phoneValues[i]);
+                component.set("v.businessChecked",true);
+                $A.util.removeClass(mobileClass, "slds-has-error");
+                component.set("v.mobileChecked",false);
+                break;
+            }
+            if(phoneValues[i]=='mobile')
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                console.log('MObile here',phoneValues[i]);
+                $A.util.removeClass(businessClass, "slds-has-error");
+                component.set("v.mobileChecked",true);
+                component.set("v.businessChecked",false);
+                break;
+            }
+            if(phoneValues.length == 1)
+            {
+                component.set("v.isLoaded",false);
+                component.set("v.isLoaded",true);
+                $A.util.removeClass(businessClass, "slds-has-error");
+                $A.util.removeClass(mobileClass, "slds-has-error");
+                console.log('None Selected');
+                component.set("v.mobileChecked",false);
+                component.set("v.businessChecked",false);
+                                
+                break;
+            }
+            
+        }
+        
+    },
+    handleDeleteFile : function(component, event) {
+        //  Delete File Code Starts here By PO
+        
+        console.log('Inside delete File'+component.get("v.fileCount"));
+        var deleteDoc = event.getSource().get("v.name");
+        console.log('deleteDoc',deleteDoc);
+        var dfile = component.get("v.duplicateFiles");
+        dfile.splice(deleteDoc,1);
+        component.set("v.duplicateFiles",dfile);
+        console.log('Duplicate File in Delete'+dfile);
+        
+        console.log('Duplicate File names after Delte',component.get("v.duplicateFiles"));
+        var fname = component.get("v.fileNames");
+        console.log('File names',fname);
+        fname.splice(deleteDoc, 1);
+        component.set("v.fileNames",fname);
+        console.log('File names after Delte',component.get("v.fileNames"));
+        
+        var fn = component.get("v.fn");
+        console.log('fn in delete',fn);
+        fn.splice(deleteDoc, 1);
+        component.set("v.fn",fn);
+        
+        // Delete DOcument ID from List
+        var updatedDocId;
+        var docuIds = component.get("v.documentIds");
+        console.log('Before Docs Id '+docuIds);
+       // var allDocId = [];   
+       // var newIds = docuIds.split('-');
+        
+      //  newIds = newIds.filter(function( element ) {
+  		//		 return element !== "undefined";
+		//			});
+        
+       // console.log('After Filter newIds',newIds);
+        
+        
+     /*   for(var i = 0;i<newIds.length;i++)
+        {
+            allDocId.push(newIds[i]);
+        }
+        console.log('All DOc Id before delet'+allDocId) */
+        
+        var fileToDelete = docuIds[deleteDoc];
+        docuIds.splice(deleteDoc, 1);
+        console.log('Delete Index '+deleteDoc+'Final docuIds'+docuIds);
+        
+     /*   if(allDocId != null && allDocId.length > 0 )
+        {
+            for(var i = 0;i<allDocId.length;i++)
+            {
+                updatedDocId = allDocId[i]+"-"+updatedDocId;
+                
+            } 
+        } 
+        */
+        
+        var fileCount = component.get("v.fileCount");
+      //  console.log("updatedDocId",updatedDocId);
+        component.set("v.documentIds", docuIds);
+        component.set("v.fileCount",fileCount-1);
+        console.log('The File COunt After Delete'+component.get("v.fileCount"));
+        console.log('The Record to Delete is',fileToDelete);
+       // helper.deleteFileOnCase(component,fileToDelete);
+        //  Delete File Code Ends By PO
+    },
+    handleAreaChange : function(component, event,helper) {
+        
+        var businessCode = component.find("businesscountrycode").get("v.value");
+        
+        component.find("businessareahidden").set("v.value",businessCode);
+        
+        var bcode ="+"+businessCode;
+        
+        component.set("v.selectedBusinessArea",bcode);
+        component.set("v.showerror", false);
+        
+        
+        component.find("businesscountrycode").set("v.value",component.get("v.selectedBusinessArea"));
+        
+        component.set("v.disablebutton",false);
+        console.log('business Code',component.get("v.selectedBusinessArea"));
+        
+        
+        
+        // component.find("businesscountrycode").set("v.text","");
+        //  component.find("businesscountrycode").set("v.selected","");
+        
+        
+        
+        
+        
+        
+    },
+    
+    handleAreaChangeMobile : function(component, event,helper) {
+        
+        var mobileCode = component.find("mobilecountrycode").get("v.value");
+        console.log('Set Mobile COde'+mobileCode);
+        component.find("mobileareacodehidden").set("v.value",mobileCode);
+        console.log('HERE '+component.find("mobileareacodehidden").get("v.value"));
+        var mcode ="+"+mobileCode;
+        component.set("v.selectedMobileArea",mcode);
+        component.set("v.displayerror",false);
+        component.find("mobilecountrycode").set("v.value",component.get("v.selectedMobileArea"));
+        component.set("v.disablebutton",false);
+        console.log('mobileCode Code',mobileCode);         
+        
+    },
+   })

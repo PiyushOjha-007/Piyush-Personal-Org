@@ -1,0 +1,21 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="AccountDisplayController" >
+    <aura:attribute name="Accounts" type="Account[]"/>
+    <aura:attribute name="ContactsList" type="Contact[]"/>
+    <aura:attribute name="buttonClick" type="boolean" default="true"/>
+    <aura:attribute name="AccountId" type="String"/>
+        <aura:handler name="init" value="{!this}" action="{!c.getAccountList}"/>
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <aura:iteration items="{!v.Accounts}" var="acc">
+                
+                    <tr>
+                <td style="color:white"><a id="{!acc.Id}" href="#" onclick="{!c.getAccountID}" >
+                    {!acc.Name}</a>
+                </td>
+                    </tr>
+                
+            </aura:iteration>
+        </table>
+     
+        <c:ContactDisplayPage contactList="{!v.ContactsList}"/>
+     
+        </aura:component>

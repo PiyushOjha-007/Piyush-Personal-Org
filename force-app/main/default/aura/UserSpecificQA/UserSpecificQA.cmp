@@ -1,0 +1,10 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="selectedUser" type="String" default="" />
+    <lightning:select name="select1" aura:id="selectaura" label="How many tickets?" onchange="{! c.onChange }" required="true">
+        <option value="{!v.selectedUser}">choose one...</option>
+        <option value="one">one</option>
+        <option value="two">two</option>
+        <option value="three">three</option>
+        <option value="{!v.selectedUser}">{!v.selectedUser}</option>
+    </lightning:select>
+</aura:component>

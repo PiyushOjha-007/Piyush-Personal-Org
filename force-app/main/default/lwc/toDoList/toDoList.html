@@ -1,0 +1,15 @@
+<template>
+    <lightning-layout class="slds-align_absolute-center slds-text-align_center ListContainer" multiple-rows="true">
+        
+    <div class="slds-text-heading_label" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"><b>All To Do Tasks for last 7 Days</b></div><br/>
+    <template for:each={toDos} for:item="todo">
+    <lightning-formatted-date-time key={todo.key} class="DateClass" value={todo.key} year="numeric" month="short" day="2-digit" 
+                ></lightning-formatted-date-time> <br key={todo.key}/>
+    <template for:each={todo.value} for:item="inToDo">
+                <c-to-do-list-item key={inToDo.Id} to-do-completed-date={inToDo.Completed_On__c} to-do-task-name={inToDo.Task_Name__c} to-do-done={inToDo.Done__c}></c-to-do-list-item>
+    </template>
+    <br key={todo.key}/>
+    </template>
+</lightning-layout>
+
+</template>

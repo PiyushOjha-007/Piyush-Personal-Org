@@ -1,0 +1,51 @@
+.THIS .slds-checkbox {
+    display: inline !important;
+}
+    .THIS .selected{
+    color:orange;
+}
+.THIS .slds-checkbox_faux
+{
+    border-radius: 2px;
+    color: white;
+    background: white;
+    border-color: grey;
+}
+.THIS .slds-input
+{
+    width:22%;
+    border-radius : 5px;
+    border-color: lightgray;
+}
+.THIS .mycasediv
+{
+    color:red;
+}
+.THIS .greenSpan
+{
+    color:green;
+}
+.THIS .orangeSpan
+{
+    color:Orange;
+}
+
+.THIS .BorderColor
+{
+    border-bottom:1.5px solid black;
+}
+.THIS .slds-card 
+{
+    border:0px solid grey;
+   
+}
+.THIS .greySpan
+{
+    background:snow;
+    color:black;
+}
+.THIS .whiteSpan
+{
+    background:white;
+    color:black;
+}

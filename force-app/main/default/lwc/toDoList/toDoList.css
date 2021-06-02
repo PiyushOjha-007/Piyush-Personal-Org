@@ -1,0 +1,15 @@
+.ListContainer{
+    background-color: white;
+    padding: 3rem;
+    max-height: 30rem;
+    display: block;
+    overflow-y: scroll;
+}
+.DateClass
+{
+    color: black;
+    font-weight: initial;
+    border-radius: 5px;
+    border-style: groove;
+    max-width: fit-content;
+}

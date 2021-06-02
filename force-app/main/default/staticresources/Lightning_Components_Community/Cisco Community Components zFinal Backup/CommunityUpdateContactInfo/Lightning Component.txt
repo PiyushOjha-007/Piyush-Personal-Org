@@ -1,0 +1,109 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="CommunityUpdateContact_Controller"  access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" access="global" />
+    <aura:attribute type="String" name="selectedAreaCode" default= "Country Code"/>
+    <aura:attribute name="CountryCodeOption" type="Object[]" />
+    <aura:attribute name="channels" type="List"/>
+    <aura:attribute name="saveSelectedCountry" type="String" default=""/>
+    <aura:attribute name="selectedCountryCode" type="String" default=""/>
+    <aura:attribute name="Error" type="string" />
+    <aura:attribute name="myemail" type="string" />
+    <aura:attribute name="updateStatus" type="Boolean" default="false" />
+    <aura:attribute name="contactList" type="CommunityUpdateContact_Controller.ContactWrapper[]" />
+    <aura:attribute name="myciscoid" type="string" />
+    <aura:attribute name="userData" type="User" />
+    <aura:attribute name="CountryOption" type="List" access="global" />
+    <aura:attribute name="newCon" type="Contact"
+                    default="{ 'sobjectType': 'Contact',
+                             'FirstName': '',
+                             'LastName':'',
+                             'Email' : '',
+                             'Phone' :'',
+                             'AccountId' :'001A000000C1hAaIAJ',
+                             'Cisco_ID_CSCO__c' : '',
+                             'Country__c' : '',
+                             'Cisco_com_Login__c' :'' }" access="global"/>
+    <lightning:navigation aura:id="navService" />
+    <!-- Lightning UI code starts from here -->
+    
+    <div style="background-color:#f5f5f6 !important; padding:inherit !important;">
+        
+        <div class="headerclass">  
+            <label style="font-size:40px;padding-left: 25px;">{!$Label.c.Contact_Information}</label>    
+            <div class="slds-align-right" style="padding-right:25px;font-size:14px;" align="right"> <span style="color:red;">*&nbsp;</span>{!$Label.c.portal_required}</div> 
+        </div>
+        
+<div class="" style="padding-left: 25px; padding-right:25px;padding-bottom:25px;">
+            
+            <div style="background-color: #ffffff !important;font-size: 14px;padding-left: 25px;
+                        padding-right: 25px;padding-top: 20px;">
+
+        
+        <p class="slds-align_absolute-center" style="color:red;">{!v.Error}</p>                        
+        
+        <div class="slds-grid slds-gutters" style="width: 90%;margin-left: 40px;background-color:white;">
+            
+            <div class="slds-p-bottom_large slds-p-left_large" style="width:100%;font-size:14px;">
+                <div class="slds-grid slds-gutters" style="width:100%;">
+                    <div class="slds-col slds-size_1-of-2 slds-text-title_caps" style="font-size:14px;">
+                     <b>  {!$Label.c.portal_emailaddress}: <ui:outputText value="{!v.contactList[0].conEmail}"/></b>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-text-title_caps" style="font-size:14px;">
+                      <b>  CSCO ID: <ui:outputText value="{!v.contactList[0].conCiscoId}"/></b>
+                    </div>
+                </div><br/>
+                <div class="slds-grid slds-gutters" style="width:100%;font-size:14px;">
+                    <div class="slds-col" style="font-size:14px;">
+                        <lightning:input label="{!$Label.c.portal_firstname}" value="{!v.contactList[0].conFirstName}" aura:id="fname" name="firstname" required="true" messageWhenValueMissing="{!$Label.c.portal_error_first_name}"   /> 
+                    </div>
+                    <div class="slds-col">
+                        <lightning:input label="{!$Label.c.portal_lastname}" aura:id="lname" name="lastname" value="{!v.contactList[0].conLastName}" required="true" messageWhenValueMissing="{!$Label.c.portal_error_last_name}" /> 
+                    </div>
+                </div><br/>
+                <div class="slds-grid slds-gutters" style="width:100%;">
+                    <div class="slds-col" style="width:50%;">
+                        <lightning:input label="{!$Label.c.Cisco_com_Login}" aura:id="ciscologin" value="{!v.contactList[0].conCscoLogin}" name="ciscologin"  />
+                       <!-- <lightning:input label="{!$Label.c.Cisco_com_Login}" aura:id="ciscologin" value="{!v.contactList[0].conCscoLogin}" name="ciscologin" messageWhenPatternMismatch="{!$Label.c.The_login_field_on_Cisco_com_should_be_an_email_address}"  pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />--> 
+                    </div>
+                    
+                       <div class="slds-col" style="width:15%;">
+                                 <!--  <lightning:combobox name="countrycode" placeholder="Select Area Code" label="Area Code" aura:id="countrycode" value="{!v.newCon.Country_Area_Code__c}"   options="{!v.CountryCodeOption}"/> -->
+                                    
+                                     <lightning:select name="countrycode1" aura:id="countrycode" label="Country Code" onchange="{!c.handleChange}" >
+                                         <option value ="{!v.selectedAreaCode}">{!v.selectedAreaCode}</option>
+                                        <aura:iteration items="{!v.CountryCodeOption}" var="c">
+                                            <option value="{!c.value}" >{!c.text}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                    
+                                     
+                                </div>
+                    
+                    <div class="slds-col" style="width:35%;">
+                        <lightning:input pattern="[0-9]*" messageWhenPatternMismatch="Phone Number can only contain numbers." label="{!$Label.c.portal_phonenumber}" aura:id="phone" value="{!v.contactList[0].conPhone}" name="phone" /> 
+                    </div>
+                </div><br/>
+                <div class="slds-grid slds-gutters" style="width:50%;">
+                    <div class="slds-col" style="width:50%;">
+                        <lightning:combobox name="Country" label="{!$Label.c.Country}" aura:id="country"  value="{!v.contactList[0].conCountry}" options="{!v.CountryOption}"/>
+                    </div>
+                </div><br/><br/>
+                
+                <div class="slds-align_absolute-center" >  
+                    <lightning:button class="buttonclass" variant="Neutral" label="{!$Label.c.Save_Changes}" title="Save Changes" onclick="{! c.updateContact }" />
+                </div>
+                <br/>
+                <div align="center" style="font-size:14px;font-family:CiscoSansTTExtraLight;">
+                    <span >
+                        <a href="{!(join('/s',$Label.c.CommunityBaseUrl,'/mycases'))}" style="color:#009EDC;font-size:14px;font-family:CiscoSans;">{!$Label.c.Cancel}
+                        </a>
+                    </span></div>
+            </div>
+            
+        </div>
+    </div>
+        </div>
+    </div>
+    <!-- Lightning UI Code Ends Here -->
+    
+</aura:component>

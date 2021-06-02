@@ -1,0 +1,85 @@
+<aura:component controller="CertificationController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute type="List" name="CertiList"/>
+    
+    <div class="slds-grid slds-gutters" style="background:lightgrey;color:black;padding:5px;height: 180px;border-color:gray;width: 1127px;margin-left: 50px;">
+        <div class="slds-col slds-size_1-of-5">
+            <p class="slds-text-heading_medium">Entry</p><br/>
+            <p class="slds-text-body_small" >Starting point for individuals interested in starting a career as a networking professional.
+            </p>            
+        </div>
+        <div class="slds-col slds-size_1-of-5">
+            <p class="slds-text-heading_medium">Associate</p><br/>
+            <p class="slds-text-body_small">Master the essentials needed to launch a rewarding career and expand your job possibilities with the latest technologies.
+            </p><br/>
+       </div>
+        <div class="slds-col slds-size_1-of-5">
+            <p class="slds-text-heading_medium">Professional</p><br/>
+            <p class="slds-text-body_small">Select core technology track and a focused concentration exam to customize your professinal-level certification.
+            </p><br/>
+       </div>
+        <div class="slds-col slds-size_1-of-5">
+            <p class="slds-text-heading_medium">Expert</p><br/>
+            <p class="slds-text-body_small">This certification is accepted worldwide as the most prestigious certification in the technology industry.
+            </p><br/>
+       </div>
+        <div class="slds-col slds-size_1-of-5">
+            <p class="slds-text-heading_medium">Architect</p><br/>
+            <p class="slds-text-body_small">The highest level of accreditation achievable and recognizes the architectural expertise of network designers.
+            </p><br/>
+       </div>
+    </div>
+    
+    
+    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" style="color:grey;
+    border-color: darkgrey;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 50px;
+    margin-right: 0px;
+    width: 1118px;
+    height: 391px;
+                                                                                   ">
+        
+        <tbody>
+            <aura:iteration items="{!v.CertiList}" var="item">
+                
+                <tr class="slds-hint-parent">
+                    <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Entry__c}</a>
+                        </div>
+                    </td>
+                
+                
+                    <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Associate__c}</a>
+                        </div>
+                    </td>
+                <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Professional__c}</a>
+                        </div>
+                    </td>
+                 <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">{!item.Expert__c}</a>
+                        </div>
+                    </td>
+                <td scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="javascript:void(0);" tabindex="-1">CCAr</a>
+                        </div>
+                    </td>
+                    </tr>
+            </aura:iteration>
+            
+            
+            
+        </tbody>
+    </table>
+    
+    
+</aura:component>

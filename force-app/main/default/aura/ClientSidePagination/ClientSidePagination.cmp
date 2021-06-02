@@ -1,0 +1,42 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller = "AccountDisplayController" >
+	
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="allData" type="List"/>
+    <aura:attribute name="firstPage" type="Integer" default = "2"/>
+    <aura:attribute name="LastPage" type="Integer"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="lessRecords" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
+    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                All Accounts with Client Side Pagination
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <!-- All the Records with Proper Pagination -->
+            <lightning:datatable aura:id = "accDT" class=" slds-m-top_medium"
+                             columns = "{!v.columns}"
+                             maxRowSelection="{!v.maxRowSelection}"
+                             data = "{!v.data}"
+                             keyField = "Id"
+                             hideCheckboxColumn = "true"
+                             onrowaction="{!c.handleRowAction}"/>
+        </div>
+        <footer class="slds-card__footer slds-grid slds-gutters">
+            <div class="slds-col slds-float_left">
+                <p class="slds-text-title_caps slds-text-heading_medium"> Page {!v.pageNumber} | Showing records from {!(v.pageSize * v.pageNumber)} to {!(v.pageSize * v.pageNumber + v.pageSize)} </p>
+            </div>
+            <div class="slds-col slds-float_right">
+            <lightning:button iconName="utility:chevronleft" iconPosition="left" disabled = "{!v.pageNumber  == 1}" variant="brand" label="Previous" title="Previous" onclick="{! c.handlePrevious }"/>
+            <lightning:button iconName="utility:chevronright" iconPosition="right" disabled = "{!v.isLastPage}" variant="brand" label="Next" title="Next" onclick="{! c.handleNext }"/>
+            </div>
+        </footer>
+    </article>	
+    
+</aura:component>
